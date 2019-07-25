@@ -1,0 +1,229 @@
+<template>
+  <div id="app" style="visibility:hidden;" v-bind:style="{visibility:loading}"  >
+     <div id="header">
+        <div>
+          <span>{{currentPageData.id+1}}</span><span>/{{Data.length}}</span>
+        </div>
+        <h3 style="text-align: center;width:150px;margin:0 auto;">读书</h3>
+    </div> 
+    <SideMenu color="#fff"></SideMenu>
+    <div id="library" v-bind:style="{marginTop:libraryOffsetTop+'px'}">
+        <div>
+           <div v-for="(item,index) in Data"  :class="{list:true,selected:selectBookId==item.id}" @click="chooseBook(index)"><img :src="item.imgSrc"></div>
+        </div>
+    </div>
+    <div class="section"
+     @touchmove="isShowLibrary" @touchend="hideLibraay" >
+           <div style="display: flex;padding:20px 10px 0px 10px;" class="title">
+              <div>
+                <h2>{{currentPageData.title}}</h2>
+                <p>{{currentPageData.message}}</p>
+              </div>
+               <div >
+                <img style="width: 100px;" :src="currentPageData.imgSrc">
+              </div>
+           </div>
+           <div class="divider"></div>
+           <div class="passages">
+               <h4>摘抄：</h4>
+               <p v-for="item in currentPageData.excerpt">{{item}}</p>
+           </div>
+           <div class="divider"></div>
+           <div class="comment">
+              <h4>我读：</h4>
+              <p v-for="item in currentPageData.comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item}}<br>
+            </p>
+           </div>
+           <div class="divider"></div>
+           <div style="padding:5px 10px;color: #aaa;">
+              <i style="font-size: 2em;" @click="chooseBook(currentPageData.id-1)"><font-awesome-icon prefix="far"  icon="hand-point-left" /></i>
+              <i style="float: right;font-size: 2em;" @click="chooseBook(currentPageData.id+1)"><font-awesome-icon icon="hand-point-right"  /></i>
+           </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import SideMenu from '../components/SideMenu.vue'
+
+export default {
+  name:'tenBooks',
+  components:{
+    SideMenu
+  },
+  data(){
+    return{
+         container:'',
+         loading:'visible',
+         libraryOffsetTop:-83,
+         preMove:null,
+         Data:[
+         {
+           id:0,
+           imgSrc:require('../assets/img/book_1.jpg'),
+           title:'哲学家们都干了些什么？',
+           message:'林欣浩/ 辽宁教育出版社 / 274页 / 2011-5',
+           excerpt:['1.我们追求个人幸福的最高境界，不是纵欲，而是内心的平静。','2.统计学上有一句经典的话，相关性不代表因果性。','3.人的知识像一个圆圈, 知识越多，圆圈对周长越长，就会发现自己越无知。'],
+           comment:['为了通俗易懂放弃严谨的科普，相当于哲学入门介绍帖集合，还参杂了作者本人不靠谱的理解和故作风趣的语言，让人十分难受。最可怕的是，作者对许多哲学学说和科学理论的解释多有谬误，误人子弟。并且作者可能是个带路党，字里行间充满对中国哲学的嘲讽和不屑，牵强附会，还黑得很低端。但也并非一无是处，有些哲学理论解释和介绍还是能看的。','为了通俗易懂放弃严谨的科普，相当于哲学入门介绍帖集合，还参杂了作者本人不靠谱的理解和故作风趣的语言，让人十分难受。最可怕的是，作者对许多哲学学说和科学理论的解释多有谬误，误人子弟。并且作者可能是个带路党，字里行间充满对中国哲学的嘲讽和不屑，牵强附会，还黑得很低端。但也并非一无是处，有些哲学理论解释和介绍还是能看的。','为了通俗易懂放弃严谨的科普，相当于哲学入门介绍帖集合，还参杂了作者本人不靠谱的理解和故作风趣的语言，让人十分难受。最可怕的是，作者对许多哲学学说和科学理论的解释多有谬误，误人子弟。并且作者可能是个带路党，字里行间充满对中国哲学的嘲讽和不屑，牵强附会，还黑得很低端。但也并非一无是处，有些哲学理论解释和介绍还是能看的。']
+         },
+         {
+           id:1,
+           imgSrc:require('../assets/img/book_2.jpg'),
+           title:'横道世之介',
+           message:'[日] 吉田修一/ 上海人民出版社/ 416页 / 2018-6 ',
+           excerpt:['1.“祥子，你真的喜欢他吗？” “……嗯，我非常、非常喜欢他，有时候太喜欢了，喜欢到连我自己都生气。不过，都已经分手很久了，现在也想不起来当时为什么会分手。毕竟那时候才十几岁而已，也不是什么需要做决定的年龄。” “你们大概交往了多久？” “一年多……现在想起来，分手的理由肯定很无聊。” “像我们这种在富裕国家长大的年轻男女，分手的理由除了荒唐、无聊以外，找不出第二个……” 听了希薇亚的玩笑话，我无奈地笑...'],
+           comment:['横道世之介年纪不大，升入大学的时候十八岁，到死也才不过四十岁。他的名字“世之介”，是日本江户时代的作家井原西鹤小说《好色一代男》中的人物，理想是尝遍世间的美色。但大学生横道世之介是个谈到理想就会脸红的男孩，浑浑噩噩好像也没什么理想。他即将升入大二时，从前辈手里得到了一部相机，没有目的地对着身边的事物乱拍，后来成为一名摄影师。','如果我们在现实生活中认识世之介这个人，我们可能会遗憾旁人无法再认识世之介而不想过多描述他。就像《横道世之介》这部小说中，一些人在后来想到世之介时，他们躲避着不愿说起他，只是独自怀念着世之介，感激相识他的幸运。','日本小说家吉田修一的代表作《横道世之介》曾在2013年被导演冲田修一改编为同名电影，感动了万千观众。遗憾的是，这部原著小说在国内始终没有较好的译本。一直等到现在，世纪文景终于再版了它。也许你已经看过那部电影，但仍想真诚推荐给你读这部小说。如果你还在世之介十八九岁的年纪，刚刚进入大学，这部小说或许还能帮你指清一些生活交友上的方向。']
+         }
+         ],
+         currentPageData:null
+    }
+  },
+  computed:{
+    selectBookId:function(){
+            return  this.currentPageData.id;
+         }
+  },
+  methods:{chooseBook(index){
+          if(index!=this.Data.length && index>=0){
+            this.currentPageData=this.Data[index]; 
+          }else if(index==this.Data.length && index>=0){
+            this.currentPageData=this.Data[0];
+          }else if(index<0){
+            this.currentPageData=this.Data[this.Data.length-1];
+          }
+
+          document.documentElement.scrollTop=0;
+          document.body.scrollTop=0;
+          this.libraryOffsetTop=-83;
+          this.preMove=null;
+
+        },
+        sectionOffset(){
+           return document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+
+        },
+        isShowLibrary(event){
+            if(this.sectionOffset()==0){
+              if(!this.preMove){
+                  this.preMove=event.changedTouches[0].clientY;
+              }else{
+                  if(event.changedTouches[0].clientY-this.preMove>0){
+                       if(this.libraryOffsetTop<-60){
+                          this.libraryOffsetTop+=1;
+                          this.preMove=event.changedTouches[0].clientY
+                       }else{
+                           this.libraryOffsetTop=35;
+                           this.preMove=null;
+                       }
+                  }else{
+                       // console.log(event.changedTouches[0].clientY)
+                       // if(this.libraryOffsetTop>12 && this.sectionOffset()<118){
+                       //       this.libraryOffsetTop-=1;
+                       //       this.preMove=event.changedTouches[0].clientY
+                       // }else{
+                       //     this.libraryOffsetTop=-83;
+                       //     this.preMove=null;
+                       //     // document.body.scrollTop=-153;
+                       // }
+                  }
+              }
+          }else if(this.sectionOffset()<118 && this.libraryOffsetTop>-83){
+                  if(this.libraryOffsetTop>-83){
+                    this.libraryOffsetTop-=1;
+                    this.preMove=event.changedTouches[0].clientY
+                  }else{
+                    // this.libraryOffsetTop=-83;
+                    // this.preMove=null;
+                    // document.documentElement.scrollTop=0;
+                    // document.body.scrollTop=0;
+                  }
+          }
+        },
+        hideLibraay(){
+              console.log(this.sectionOffset());
+              if(this.sectionOffset()>=83 && this.libraryOffsetTop>-83){
+                    this.libraryOffsetTop=-83;
+                    this.preMove=null;
+                    document.documentElement.scrollTop=0;
+                    document.body.scrollTop=0;
+              }
+        }
+  },
+  mounted(){
+      this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+          setTimeout(()=>{
+            this.$indicator.close();
+          },500)
+  },
+  created(){
+    this.currentPageData=this.Data[0];
+  }
+}
+</script>
+<style lang='stylus' scoped>
+      #header{
+        padding: 5px 0px;
+        color:#fff;
+        background-color: rgba(50,50,50,1);
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 25px;
+      }
+      #header div{
+          float: left;
+          font-weight: bolder;
+          margin-left: 10px;
+      }
+      .divider{
+        border-bottom: 1px solid #eee;
+      }
+      .passages{
+         margin:20px 10px 20px 10px;
+      }
+      p{
+         margin: 5px 0px;
+         line-height: 1.7em;
+      }
+      .comment{
+         margin:20px 10px 20px 10px;
+      }
+      #library{
+        overflow-x: scroll;
+        /*margin-top: -83px;*/
+        background-color: #FFE4C4;
+     }
+     /*隐藏滚动条*/
+     #library::-webkit-scrollbar{
+       display: none;
+     }
+      #library>div{
+          display: flex;
+          flex-wrap: nowrap;
+          margin: 15px 10px;
+          align-items:center;
+      }
+      .list{
+         margin-right: 10px;
+      }
+      .list img{
+          width: 50px;
+      }
+      .selected{
+        border: 3px solid rgba(135,206,235,1);  
+      }
+      .selected img{
+          width: 55px;
+      }  
+      #library{
+        animation:jump 1.5s;
+      }
+      @keyframes jump{
+         0%{margin-top: -83px;}
+         25%{margin-top: -73px;}
+         50%{margin-top: -80px;}
+         75%{margin-top: -76px;}
+         100%{margin-top: -83px;}
+      }
+</style>
