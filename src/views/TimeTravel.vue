@@ -5,7 +5,7 @@
     </div> 
     <SideMenu color="#fff"></SideMenu>
     <div id="content">
-        <div v-for="item in Data" :key="item.id" @click="enterAlbum(item.id)">
+        <div v-for="item in Data" :key="item.id" @click="enterAlbum(item.type)">
            <div class="imgBox" :style="{height:boxHeight+'px'}">
              <img :src="item.imgSrc" :style="{height: boxHeight+'px'}">
            </div>
@@ -35,44 +35,44 @@ export default {
                   imgSrc:require("../assets/img/1.jpg"),
                   content:"无知时代",
                   count:10,
-                  id:0
+                  type:"knowless"
                },
                {
                   imgSrc:require("../assets/img/1.jpg"),
                   content:"小学时代",
                   count:10,
-                  id:1
+                  type:"primaryschool"
                },
                {
                   imgSrc:require("../assets/img/1.jpg"),
                   content:"初中时代",
                   count:10,
-                  id:2
+                  type:"middleschool"
                },
                {
                   imgSrc:require("../assets/img/1.jpg"),
                   content:"高中时代",
                   count:10,
-                  id:3
+                  type:"highschool"
                },
                {
                   imgSrc:require("../assets/img/1.jpg"),
                   content:"大学时代",
                   count:10,
-                  id:4
+                  type:"university"
                },
                {
                   imgSrc:require("../assets/img/1.jpg"),
                   content:"工作时代",
                   count:10,
-                  id:5
+                  type:"work"
                }
               ]
     }
   },
   methods:{
-    enterAlbum:function(id){
-            this.$router.push({name:'timeAlbum',params:{id}});
+    enterAlbum:function(type){
+            this.$router.push({name:'timeAlbum',params:{type}});
     }
   },
   mounted(){

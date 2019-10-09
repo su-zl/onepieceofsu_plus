@@ -4,8 +4,8 @@
         <h3 style="text-align: center;width:150px;margin:0 auto;">随想</h3>
     </div> 
     <SideMenu color="#fff"></SideMenu>
-    <div class="page-loadmore-wrapper">
-        <mt-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore">
+    <div class="page-loadmore-wrapper" :style="{height:wrapHeight+'px'}">
+        <mt-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" @bottom-status-change="handleBottomChange">
           <ul id="container"> 
                <li class="section" v-for="item in Data" v-bind:key="item.id">  
                  <div class="content">
@@ -33,6 +33,10 @@
                  </div>
               </li>
           </ul> 
+          <div slot="bottom" class="mint-loadmore-bottom">
+            <span id="animate" v-show="bottomStatus !== 'loading'" :class="{ 'rotate': bottomStatus === 'pull' }">↑</span>
+            <span v-show="bottomStatus == 'loading'">加载中</span>
+          </div>
         </mt-loadmore>
     </div>
 
@@ -64,6 +68,8 @@ export default {
          imgWidth:null,
          item_id:null,
          allLoaded:false,
+         wrapHeight:300,
+         bottomStatus:'pull',
          Data:[
          {
             id:'1',
@@ -121,6 +127,10 @@ export default {
 
   },
   methods:{
+    handleBottomChange(status){
+       console.log("status "+status);
+       this.bottomStatus = status;
+    },
     addComment(id){
        this.item_id=id;
        this.popupVisible=true;
@@ -150,12 +160,17 @@ export default {
     },
     loadBottom(){
         console.log('loadBottom');
-        this.allLoaded = true;// 若数据已全部获取完毕
+        // this.allLoaded = true;// 若数据已全部获取完毕
+        const count=this.Data.length;
+        for (var i = 0; i < count; i++) {
+          this.Data.push(this.Data[i]);
+        }
         this.$refs.loadmore.onBottomLoaded();
     }
   },
   mounted(){
-      this.imgWidth=(document.getElementsByClassName("section")[0].clientWidth-24)/3
+      this.imgWidth=(document.getElementsByClassName("section")[0].clientWidth-24)/3;
+      this.wrapHeight=document.documentElement.clientHeight-document.getElementById('header').clientHeight;
       Indicator.open('加载中...')
       setTimeout(()=>{
         Indicator.close(); 
@@ -164,9 +179,6 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
-      .page-loadmore-wrapper{
-        overflow:scrool;
-      }
       #header{
         color:#fff;
         background-color: rgba(50,50,50,1);      
@@ -215,5 +227,15 @@ export default {
         color:#aaa;
         font-size:1.5em;
         margin-right: 10px;
+      }
+      .page-loadmore-wrapper {
+          overflow: scroll;
+      }
+      #animate{
+         display:inline-block;
+         transition:transform  0.5s;
+      }
+      .rotate{
+          transform:rotate(540deg);
       }
 </style>

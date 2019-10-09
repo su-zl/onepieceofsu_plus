@@ -7,7 +7,8 @@ export default new Vuex.Store({
   state: {
       personname:'admin',
       personimgsrc:'',
-      md5_key:'123456'
+      md5_key:'123456',
+      host:'http://localhost:3000'
   },
   mutations: {
      loginSuccess(state,value){

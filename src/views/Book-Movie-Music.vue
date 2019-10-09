@@ -58,7 +58,7 @@ export default {
     chooseFilm(){
       this.$refs.film.style.color='#000';
        setTimeout(()=>{
-          this.$router.push('tenFilms')
+          this.$router.push('tenMovies')
        },1200)
     },
     chooseMusic(){

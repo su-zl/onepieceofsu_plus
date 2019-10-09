@@ -4,20 +4,31 @@
         <h3 style="text-align: center;width:150px;margin:0 auto;">文字记</h3>
     </div> 
     <SideMenu color="#fff"></SideMenu>
-    <div>
-         <ul class="container" >
-           <li v-for="item in Data">
-              <div>
-                <div class="day">{{item.day}}</div>
-                <div class="month">{{item.month}}</div>
-              </div>
-              <div @click="readArtile(item.id)">
-                 <h4 class="title">{{item.title}}</h4>
-                 <p class="content">{{item.content}}</p>
-              </div>
-           </li>
-         </ul>
-    </div> 
+
+    <div class="page-loadmore-wrapper" :style="{height:wrapHeight+'px'}" >
+        <mt-loadmore :autoFill=false :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" @bottom-status-change="handleBottomChange">
+          <div>
+               <ul class="container" >
+                 <li v-for="item in Data">
+                    <div>
+                      <div class="day">{{item.day}}</div>
+                      <div class="month">{{item.month}}</div>
+                    </div>
+                    <div @click="readArtile(item.id)">
+                       <h4 class="title">{{item.title}}</h4>
+                       <p class="content">{{item.content}}</p>
+                    </div>
+                 </li>
+               </ul>
+          </div> 
+          <div slot="bottom" class="mint-loadmore-bottom">
+            <span id="animate" v-show="bottomStatus !== 'loading'" :class="{ 'rotate': bottomStatus === 'pull' }">↑</span>
+            <span v-show="bottomStatus == 'loading'">加载中</span>
+          </div>
+        </mt-loadmore>
+    </div>
+
+    
     
   </div> 
 </template>
@@ -36,6 +47,9 @@ export default {
          container:'',
          loading:'visible',
          testshow1:true,
+         allLoaded:false,
+         wrapHeight:300,
+         bottomStatus:'pull',
          Data:[
          {    
              id:'0',
@@ -62,6 +76,19 @@ export default {
     }
   },
   methods:{
+    handleBottomChange(status){
+         console.log("status "+status);
+         this.bottomStatus = status;
+    },
+    loadBottom(){
+        console.log('loadBottom');
+        // this.allLoaded = true;// 若数据已全部获取完毕
+        const count=this.Data.length;
+        for (var i = 0; i < count; i++) {
+          this.Data.push(this.Data[i]);
+        }
+        this.$refs.loadmore.onBottomLoaded();
+    },
     readArtile(id){
          this.$router.push({name:'readArticle',params:{id}});
     }
@@ -113,5 +140,12 @@ export default {
       .content{
         color: #aaa;
         font-size: 0.7em;
+      }
+      #animate{
+         display:inline-block;
+         transition:transform  0.5s;
+      }
+      .rotate{
+          transform:rotate(540deg);
       }
 </style>
