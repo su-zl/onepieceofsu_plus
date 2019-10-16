@@ -36,6 +36,7 @@
 <script>
 import SideMenu from '../components/SideMenu.vue'
 import {Indicator } from 'mint-ui'
+const axios = require('axios');
 
 export default {
   name:'timeTravel',
@@ -50,29 +51,12 @@ export default {
          allLoaded:false,
          wrapHeight:300,
          bottomStatus:'pull',
-         Data:[
-         {    
-             id:'0',
-             day:'14',
-             month:'三月',
-             title:'瘦毛猴的爱情？',
-             content:'一只鱼言于郑表达方式打飞机收到货福建省倒海翻江'
-         },
-         {
-             id:'1',
-             day:'14',
-             month:'三月',
-             title:'瘦毛猴的爱情？',
-             content:'一只鱼言于郑表达方式打飞机收到货福建省倒海翻江'
-         },
-         {
-             id:'2',
-             day:'14',
-             month:'三月',
-             title:'瘦毛猴的爱情？',
-             content:'一只鱼言于郑表达方式打飞机收到货福建省倒海翻江'
-         }
-         ]
+         Data:[]
+    }
+  },
+  computed:{
+    host(){
+      return this.$store.state.host;
     }
   },
   methods:{
@@ -93,11 +77,21 @@ export default {
          this.$router.push({name:'readArticle',params:{id}});
     }
   },
-  mounted(){
-      Indicator.open('加载中...')
-      setTimeout(()=>{
-        Indicator.close(); 
-      },500) 
+  created(){
+      this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+      const that=this;
+      axios.get(that.host+'/api/article?pageIndex=1')
+      .then(function(response){
+           console.log(response);
+           let data=response.data;
+           that.Data=data.rows;
+      })
+      .catch(function(error){
+          console.log(error);
+      })
+      .finally(function(){
+        that.$indicator.close();
+      }) 
   }
 }
 </script>

@@ -54,6 +54,7 @@ import Viewer from 'v-viewer'
 import Vue from 'vue'
 Vue.component(Loadmore.name, Loadmore);
 Vue.use(Viewer)
+const axios = require('axios');
 
 export default {
   name:'timeAlbum',
@@ -124,7 +125,9 @@ export default {
     }
   },
   computed:{
-
+    host(){
+      return this.$store.state.host;
+    }
   },
   methods:{
     handleBottomChange(status){
@@ -170,11 +173,23 @@ export default {
   },
   mounted(){
       this.imgWidth=(document.getElementsByClassName("section")[0].clientWidth-24)/3;
-      this.wrapHeight=document.documentElement.clientHeight-document.getElementById('header').clientHeight;
-      Indicator.open('加载中...')
-      setTimeout(()=>{
-        Indicator.close(); 
-      },500) 
+      this.wrapHeight=document.documentElement.clientHeight-document.getElementById('header').clientHeight; 
+  },
+  created(){
+      this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+      const that=this;
+      axios.get(that.host+'/api/article?pageIndex=1')
+      .then(function(response){
+           console.log(response);
+           let data=response.data;
+           that.Data=data.rows;
+      })
+      .catch(function(error){
+          console.log(error);
+      })
+      .finally(function(){
+        that.$indicator.close();
+      }) 
   }
 }
 </script>

@@ -8,7 +8,7 @@
          <viewer :images="images">
            <div class="imgList">
              <div class="imgBox" v-for="item in images" :style="{width:imgWidth+'px',height:imgWidth+'px'}">
-               <img @load="AutoResizeImage(imgWidth,$event.target)" :src="item" >
+               <img @load="AutoResizeImage(imgWidth,$event.target)" :src="item.url" >
              </div>
            </div>
           </viewer>
@@ -24,6 +24,7 @@ import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
 import Vue from 'vue'
 Vue.use(Viewer)
+const axios = require('axios');
 
 export default {
   name:'timeAlbum',
@@ -39,30 +40,33 @@ export default {
     }
   },
   computed:{
-    id(){
-        return this.$route.params.id ;
+    type(){
+        return this.$route.params.type ;
     },
     title(){
-       switch(this.id){
-        case 0:
+       switch(this.type){
+        case 'knowless':
             return '无知时代';
             break;
-        case 1:
+        case 'primaryschool':
             return '小学时代';
             break;
-        case 2:
+        case 'middleschool':
             return '初中时代';
             break;
-        case 3:
+        case 'highschool':
             return '高中时代';
             break;
-        case 4:
+        case 'university':
             return '大学时代';
             break;
-        case 5:
+        case 'atwork':
             return '工作时代';
             break;
        }
+    },
+    host(){
+        return  this.$store.state.host;
     }
   },
   methods:{
@@ -88,12 +92,27 @@ export default {
     },
   },
   mounted(){
-      // this.boxHeight=document.getElementsByClassName('imgBox')[0].clientWidth;
-      this.imgWidth=(document.getElementById("content").clientWidth-4)/4;
-      Indicator.open('加载中...')
-      setTimeout(()=>{
-        Indicator.close(); 
-      },500) 
+      this.imgWidth=(document.getElementById("content").clientWidth-4)/4; 
+  },
+  created(){
+      this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+      const that=this;
+      axios.get(that.host+'/api/time_album?type='+this.type)
+      .then(function(response){
+           console.log(response);
+           let data=response.data;
+           for (var i = 0; i < data.length; i++) {
+             data[i].url=that.host+data[i].url;
+           }
+           that.images=data;
+
+      })
+      .catch(function(error){
+          console.log(error);
+      })
+      .finally(function(){
+        that.$indicator.close();
+      })
   }
 }
 </script>

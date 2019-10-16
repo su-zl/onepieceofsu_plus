@@ -18,6 +18,7 @@
 import SideMenu from '../components/SideMenu.vue'
 import CommentDialog from '../components/CommentDialog.vue'
 import {Indicator } from 'mint-ui'
+const axios = require('axios');
 
 export default {
   name:'timeAlbum',
@@ -29,42 +30,16 @@ export default {
     return{
          loading:'visible',
          popupVisible:false,
-         Data:[
-         {    
-             class:'title',
-             content:'开车冲进水里应该怎么自救'
-         },
-         {    
-             class:'pagetitle',
-             content:'1、大部分人都认为车辆如果掉进水里'
-         },
-         {    
-             class:'section',
-             content:'大部分人都认为车辆如果掉进水里，车门肯定打不开。其实不是的，在车辆冲进水里的几分钟之内，车辆还没有完全沉浸入水中，这个时候力气大是可以打开门的。在这个时候，我们可以迅速打开车门进行逃生。而且，在这段时间内，车辆可能还没有断电，窗户也是可以打开的。如果打不开，破窗逃生吧。'
-         },
-         {    
-             class:'pagetitle',
-             content:'2、车辆冲进水中后'
-         },
-         {    
-             class:'section',
-             content:'车辆冲进水中后，千万不要觉得不会游泳就放弃逃生了。这不对吧，毕竟冲进水的时候，肯定旁边有看到的人，如果你从车里逃出来的话，别人看到了还可以去救你呢。'
-         },
-         {    
-             class:'pagetitle',
-             content:'3、车辆在冲进水中后'
-         },
-         {    
-             class:'section',
-             content:'车辆在冲进水中后，一定要打开车灯吸引附近人的注意力。这样逃生的几率也会大一些。千万不要坐以待毙。在车里逃出来后，如果真的不会水，可以暂时先爬上车顶等待救援。因为车辆下沉还是需要一段时间的。不要慌张就好。'
-         },
-         ]
-    }
+         Data:[]
+        }
   },
   computed:{
     id(){
         return this.$route.params.id ;
     },
+    host(){
+      return this.$store.state.host;
+    }
   },
   methods:{
     addComment(){
@@ -74,12 +49,21 @@ export default {
        this.popupVisible=false;
     } 
   },
-  mounted(){
-      // this.boxHeight=document.getElementsByClassName('imgBox')[0].clientWidth;
-      Indicator.open('加载中...')
-      setTimeout(()=>{
-        Indicator.close(); 
-      },500) 
+  created(){
+      this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+      const that=this;
+      axios.get(that.host+'/api/article_detail?id='+this.id)
+      .then(function(response){
+           console.log(response);
+           let data=response.data;
+           that.Data=data;
+      })
+      .catch(function(error){
+          console.log(error);
+      })
+      .finally(function(){
+        that.$indicator.close();
+      }) 
   }
 }
 </script>

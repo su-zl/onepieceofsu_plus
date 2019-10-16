@@ -7,7 +7,7 @@
     <div id="content">
         <div v-for="item in Data" :key="item.id" @click="enterAlbum(item.type)">
            <div class="imgBox" :style="{height:boxHeight+'px'}">
-             <img :src="item.imgSrc" :style="{height: boxHeight+'px'}">
+             <img @load="AutoResizeImage(boxHeight,$event.target)" :src="item.url">
            </div>
             <h4>{{item.content}}</h4>
             <p>{{item.count}}</p>
@@ -20,6 +20,7 @@
 <script>
 import SideMenu from '../components/SideMenu.vue'
 import {Indicator } from 'mint-ui'
+const axios = require('axios');
 
 export default {
   name:'timeTravel',
@@ -30,58 +31,78 @@ export default {
     return{
          loading:true,
          boxHeight:0,
-         Data:[
-               {
-                  imgSrc:require("../assets/img/1.jpg"),
-                  content:"无知时代",
-                  count:10,
-                  type:"knowless"
-               },
-               {
-                  imgSrc:require("../assets/img/1.jpg"),
-                  content:"小学时代",
-                  count:10,
-                  type:"primaryschool"
-               },
-               {
-                  imgSrc:require("../assets/img/1.jpg"),
-                  content:"初中时代",
-                  count:10,
-                  type:"middleschool"
-               },
-               {
-                  imgSrc:require("../assets/img/1.jpg"),
-                  content:"高中时代",
-                  count:10,
-                  type:"highschool"
-               },
-               {
-                  imgSrc:require("../assets/img/1.jpg"),
-                  content:"大学时代",
-                  count:10,
-                  type:"university"
-               },
-               {
-                  imgSrc:require("../assets/img/1.jpg"),
-                  content:"工作时代",
-                  count:10,
-                  type:"work"
-               }
-              ]
+         Data:[]
     }
+  },
+  computed:{
+      host(){
+        return  this.$store.state.host;
+      }
   },
   methods:{
     enterAlbum:function(type){
-            this.$router.push({name:'timeAlbum',params:{type}});
+            this.$router.push({name:'timeAlbum',params:{type:type}});
+    },
+    AutoResizeImage(minWidth,objImg){
+            var img = new Image();
+            img.src = objImg.src;
+
+            var wRatio;
+            var Ratio = 1;
+            var w = img.width;
+            var h = img.height;
+            if(w>h){
+               Ratio=minWidth / h;
+            }else{
+               Ratio=minWidth / w;  
+            }
+
+            w = w * Ratio;
+            h = h * Ratio;
+            
+            objImg.height = h;
+            objImg.width = w;
     }
   },
   mounted(){
-      this.boxHeight=document.getElementsByClassName('imgBox')[0].clientWidth;
-      Indicator.open('加载中...')
-      setTimeout(()=>{
-        Indicator.close(); 
-      },500) 
-  }
+        this.boxHeight=(document.getElementById("content").clientWidth-34)/2; 
+  },
+  created(){
+      this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+      const that=this;
+      axios.get(that.host+'/api/time_travel')
+      .then(function(response){
+           console.log(response);
+           let data=response.data;
+           for (var i = 0; i < data.length; i++) {
+              data[i].url=that.host+data[i].url;
+              if(data[i].type=='knowless'){
+                  data[i].content='无知时代'   
+              }else if(data[i].type=='primaryschool'){
+                  data[i].content='小学时代'
+              }else if(data[i].type=='middleschool'){
+                  data[i].content='初中时代'
+              }else if(data[i].type=='highschool'){
+                  data[i].content='高中时代'
+              }else if(data[i].type=='university'){
+                  data[i].content='大学时代'
+              }else if(data[i].type=='atwork'){
+                  data[i].content='工作时代'
+              }
+           }
+           that.Data=data;    
+           // setTimeout(()=>{
+           //   that.boxHeight=document.getElementsByClassName('imgBox')[0].clientWidth;
+           // })
+      })
+      .catch(function(error){
+          console.log(error);
+      })
+      .finally(function(){
+        that.$indicator.close();
+      })
+  },
+  
 }
 </script>
 <style lang='stylus' scoped>
@@ -110,6 +131,7 @@ export default {
       .imgBox{
         border: 1px solid #eee;
         margin-bottom: 5px;
+        overflow:hidden;
       }
       .imgBox img{
          width: 100%;

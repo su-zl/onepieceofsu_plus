@@ -41,7 +41,7 @@ export default new Router({
       component:()=>import(/*webpackChunkName:"timeTravel"*/ './views/TimeTravel.vue')
     },
     {
-      path:'/timeAlbum/:id',
+      path:'/timeAlbum/:type',
       name:'timeAlbum',
       component:()=>import(/*webpackChunkName:"timeAlbum"*/ './views/TimeAlbum.vue')
     },
