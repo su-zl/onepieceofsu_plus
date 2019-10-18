@@ -3,8 +3,8 @@
      <div id="header">
         <h3 style="text-align: center;width:150px;margin:0 auto;">时光里</h3>
     </div> 
-    <SideMenu color="#fff"></SideMenu>
-    <div id="content">
+    <SideMenu :color="color"></SideMenu>
+    <div id="content" @touchmove="changeColor">
         <div v-for="item in Data" :key="item.id" @click="enterAlbum(item.type)">
            <div class="imgBox" :style="{height:boxHeight+'px'}">
              <img @load="AutoResizeImage(boxHeight,$event.target)" :src="item.url">
@@ -31,6 +31,8 @@ export default {
     return{
          loading:true,
          boxHeight:0,
+         scroolHeight:null,
+         color:'#fff',
          Data:[]
     }
   },
@@ -62,10 +64,22 @@ export default {
             
             objImg.height = h;
             objImg.width = w;
+    },
+    sectionOffset(){
+             return document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+    },
+    changeColor(){
+       console.log(this.sectionOffset());
+       if(this.sectionOffset()>this.scroolHeight){
+            this.color='#000'
+       }else{
+            this.color='#fff'
+       }
     }
   },
   mounted(){
         this.boxHeight=(document.getElementById("content").clientWidth-34)/2; 
+        this.scroolHeight=document.getElementById("header").clientHeight;
   },
   created(){
       this.$indicator.open({text: '',spinnerType: 'double-bounce'});

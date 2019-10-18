@@ -49,9 +49,10 @@ export default {
          loading:'visible',
          testshow1:true,
          allLoaded:false,
-         wrapHeight:300,
+         wrapHeight:1000,
          bottomStatus:'pull',
-         Data:[]
+         Data:[],
+         pageIndex:1
     }
   },
   computed:{
@@ -66,25 +67,50 @@ export default {
     },
     loadBottom(){
         console.log('loadBottom');
-        // this.allLoaded = true;// 若数据已全部获取完毕
-        const count=this.Data.length;
-        for (var i = 0; i < count; i++) {
-          this.Data.push(this.Data[i]);
-        }
-        this.$refs.loadmore.onBottomLoaded();
+        this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+        this.pageIndex++;
+        const that=this;
+        axios.get(that.host+'/api/article?pageIndex='+this.pageIndex)
+        .then(function(response){
+             console.log(response);
+             let data=response.data;
+             if(data.rows.length>0){
+                for (var i = 0; i < data.rows.length; i++) {
+                  that.Data.push(data.rows[i]);
+                }
+             }
+             if(data.rows.length<10){
+                  that.allLoaded=true;
+             }
+             that.$refs.loadmore.onBottomLoaded();
+        })
+        .catch(function(error){
+            console.log(error);
+        })
+        .finally(function(){
+          that.$indicator.close();
+        }) 
+        
+        
     },
     readArtile(id){
          this.$router.push({name:'readArticle',params:{id}});
     }
   },
+  mounted(){
+    this.wrapHeight=document.documentElement.clientHeight-document.getElementById('header').clientHeight;
+  },
   created(){
       this.$indicator.open({text: '',spinnerType: 'double-bounce'});
       const that=this;
-      axios.get(that.host+'/api/article?pageIndex=1')
+      axios.get(that.host+'/api/article?pageIndex='+that.pageIndex)
       .then(function(response){
            console.log(response);
            let data=response.data;
            that.Data=data.rows;
+           if(data.rows.length<10){
+            that.allLoaded=true;
+           }
       })
       .catch(function(error){
           console.log(error);

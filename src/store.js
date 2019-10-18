@@ -5,8 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-      personname:'admin',
-      personimgsrc:'',
+      person_name:'',
+      person_src:'',
       md5_key:'123456',
       host:'http://localhost:3000'
   },

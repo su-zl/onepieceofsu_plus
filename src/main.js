@@ -3,6 +3,7 @@ import router from './router'
 import store from './store'
 import MintUI from 'mint-ui'
 import 'mint-ui/lib/style.css'
+import animate from 'animate.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faHome,faCalendar,faEdit,faBars,faComment,faBook,faFilm,faMusic,faHandPointLeft,faHandPointRight,faFish,faCommentDots} from '@fortawesome/free-solid-svg-icons'

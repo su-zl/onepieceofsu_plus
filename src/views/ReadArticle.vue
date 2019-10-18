@@ -1,16 +1,24 @@
 <template>
   <div style="visibility:hidden; " v-bind:style="{visibility:loading}">
      <div id="header">
-        <h3 style="text-align: center;width:150px;margin:0 auto;">详情</h3>
+        <h3 style="text-align: center;margin:0 auto;">详情</h3>
     </div> 
     <SideMenu color="#fff"></SideMenu>
     <div id="container">
-         <div v-for="item in Data" v-bind:class="item.class">{{item.content}}</div>
+         <div v-for="item in Data.article" v-bind:class="item.class">{{item.content}}</div>
+         <div style="border-bottom:1px solid #aaa"></div>
+         <div>
+             <div v-for="commentItem in Data.commentList">
+                <span class="name">{{commentItem.name}}：</span>
+                <span class="comment">{{commentItem.content}}</span>
+             </div>
+         </div>
     </div> 
+
     <div>
        <i id="comment" @click="addComment"><font-awesome-icon icon="comment-dots" /></i>
     </div>
-    <CommentDialog :popupVisible="popupVisible" type="article" @hideDialog="hideDialog"></CommentDialog>
+    <CommentDialog :popupVisible="popupVisible" :itemId="item_id" type="article" @hideDialog="hideDialog" @successSubmit="successSubmit"></CommentDialog>
   </div> 
 </template>
 
@@ -30,7 +38,8 @@ export default {
     return{
          loading:'visible',
          popupVisible:false,
-         Data:[]
+         Data:[],
+         item_id:null
         }
   },
   computed:{
@@ -43,10 +52,14 @@ export default {
   },
   methods:{
     addComment(){
+       this.item_id=this.id;
        this.popupVisible=true;
     },
     hideDialog(){
        this.popupVisible=false;
+    },
+    successSubmit(data){
+       this.Data.commentList.push(data);
     } 
   },
   created(){
@@ -103,5 +116,12 @@ export default {
         top: 10%;
         width: 90%;
         border-radius: 5px;
+      }
+      .name{
+        font-size: 0.6em;
+        color: #8470FF;
+      }
+      .comment{
+        font-size: 0.6em;
       }
 </style>

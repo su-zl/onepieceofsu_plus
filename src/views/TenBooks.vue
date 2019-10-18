@@ -13,7 +13,7 @@
         </div>
     </div>
     <div v-if="currentPageData" class="section"
-     @touchmove="isShowLibrary" @touchend="hideLibraay" >
+     @touchmove="isShowLibrary" @touchend="hideLibrary" >
            <div style="display: flex;padding:20px 10px 0px 10px;justify-content:space-between;" class="title">
               <div>
                 <h2>{{currentPageData.title}}</h2>
@@ -56,18 +56,20 @@ export default {
     return{
          container:'',
          loading:'visible',
-         libraryOffsetTop:-83,
          preMove:null,
          Data:null,
-         currentPageData:null
+         libraryOffsetTop:-83,
+         currentPageData:null,
+         priTop:null,
+         priBottom:null
     }
   },
   computed:{
-    selectBookId:function(){
-            return  this.currentPageData.id;
-         },
+    selectBookId(){
+          return  this.currentPageData.id;
+    },
     host(){
-      return  this.$store.state.host;
+         return  this.$store.state.host;
     }
   },
   methods:{
@@ -82,7 +84,7 @@ export default {
 
           document.documentElement.scrollTop=0;
           document.body.scrollTop=0;
-          this.libraryOffsetTop=-83;
+          this.libraryOffsetTop=this.priTop;
           this.preMove=null;
 
         },
@@ -100,7 +102,7 @@ export default {
                           this.libraryOffsetTop+=1;
                           this.preMove=event.changedTouches[0].clientY
                        }else{
-                           this.libraryOffsetTop=35;
+                           this.libraryOffsetTop=this.priBottom+this.priTop;
                            this.preMove=null;
                        }
                   }else{
@@ -115,8 +117,8 @@ export default {
                        // }
                   }
               }
-          }else if(this.sectionOffset()<118 && this.libraryOffsetTop>-83){
-                  if(this.libraryOffsetTop>-83){
+          }else if(this.sectionOffset()<this.priBottom && this.libraryOffsetTop>this.priTop){
+                  if(this.libraryOffsetTop>this.priTop){
                     this.libraryOffsetTop-=1;
                     this.preMove=event.changedTouches[0].clientY
                   }else{
@@ -127,22 +129,21 @@ export default {
                   }
           }
         },
-        hideLibraay(){
+        hideLibrary(){
               console.log(this.sectionOffset());
-              if(this.sectionOffset()>=83 && this.libraryOffsetTop>-83){
-                    this.libraryOffsetTop=-83;
+              if(this.sectionOffset()>=Math.abs(this.priTop) && this.libraryOffsetTop>this.priTop){
+                    this.libraryOffsetTop=this.priTop;
                     this.preMove=null;
                     document.documentElement.scrollTop=0;
                     document.body.scrollTop=0;
               }
         }
   },
-  mounted(){
+  updated(){
+        this.priTop=document.getElementById('header').clientHeight-document.getElementById('library').clientHeight;
+        this.priBottom=document.getElementById('library').clientHeight;
+        this.libraryOffsetTop=this.priTop;
 
-          // this.$indicator.open({text: '',spinnerType: 'double-bounce'});
-          // setTimeout(()=>{
-          //   this.$indicator.close();
-          // },500)
   },
   created(){
     this.$indicator.open({text: '',spinnerType: 'double-bounce'});
@@ -211,7 +212,7 @@ export default {
       #library>div{
           display: flex;
           flex-wrap: nowrap;
-          margin: 15px 10px;
+          padding: 15px 10px;
           align-items:center;
       }
       .list{

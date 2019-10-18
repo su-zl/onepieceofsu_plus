@@ -5,30 +5,30 @@
     </div> 
     <SideMenu color="#fff"></SideMenu>
     <div class="page-loadmore-wrapper" :style="{height:wrapHeight+'px'}">
-        <mt-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" @bottom-status-change="handleBottomChange">
+        <mt-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :autoFill=false ref="loadmore" @bottom-status-change="handleBottomChange">
           <ul id="container"> 
-               <li class="section" v-for="item in Data" v-bind:key="item.id">  
+               <li class="section" v-for="(item,index) in Data" v-bind:key="item.id">  
                  <div class="content">
                   <p>{{item.content}}</p>
                  </div>
-                 <div class="time">
-                   <span>{{item.time}}</span>
+                 <div class="date">
+                   <span>{{item.date}}</span>
                  </div>
-                 <viewer :images="item.imgList">
+                 <viewer :images="item.img_src">
                     <div class="imgList">
-                       <div class="imgBox" v-for="imgSrc in item.imgList" :style="{width:imgWidth+'px',height:imgWidth+'px'}" :key="imgSrc">
+                       <div class="imgBox" v-for="imgSrc in item.img_src" :style="{width:imgWidth+'px',height:imgWidth+'px'}" :key="imgSrc">
                          <img @load="AutoResizeImage(imgWidth,$event.target)" :src="imgSrc" >
                        </div>
                     </div>
                  </viewer>
                  <div style="text-align:right;padding-top:5px;">
-                   <i id="comment" @click="addComment(item.id)"><font-awesome-icon icon="comment-dots" /></i>
+                   <i id="comment" @click="addComment(item.id,index)"><font-awesome-icon icon="comment-dots" /></i>
                  </div>
                  <div style="border-bottom:1px solid #aaa"></div>
                  <div>
                      <div v-for="commentItem in item.commentList">
-                        <span class="name">{{commentItem.name}}:</span>
-                        <span class="comment">{{commentItem.comment}}</span>
+                        <span class="name">{{commentItem.name}}：</span>
+                        <span class="comment">{{commentItem.content}}</span>
                      </div>
                  </div>
               </li>
@@ -40,7 +40,7 @@
         </mt-loadmore>
     </div>
 
-    <CommentDialog :popupVisible="popupVisible" :id="item_id" type="article" @hideDialog="hideDialog"></CommentDialog>
+    <CommentDialog :popupVisible="popupVisible" :itemId="item_id" type="whimsy" @successSubmit="successSubmit" @hideDialog="hideDialog"></CommentDialog>
     
   </div> 
 </template>
@@ -69,59 +69,12 @@ export default {
          imgWidth:null,
          item_id:null,
          allLoaded:false,
-         wrapHeight:300,
+         wrapHeight:1000,
          bottomStatus:'pull',
-         Data:[
-         {
-            id:'1',
-            content:'天上一只鹅，地上一只鹅，天上那只肥鹅鹅爱上地上那只瘦鹅鹅，鹅飞鹅打鹅碰鹅。',
-            time:'2018-10-21 10:21',
-            imgList:[require('../assets/img/timeAlbum/1.jpg'),require('../assets/img/timeAlbum/2.jpg'),require('../assets/img/timeAlbum/3.jpg'),require('../assets/img/timeAlbum/4.jpg'),require('../assets/img/timeAlbum/5.jpg')],
-            commentList:[
-            {
-              name:'一名不愿透露姓名的网友',
-              comment:'红红火火恍恍惚惚'
-            },
-            {
-              name:'一名不愿透露姓名的网友2',
-              comment:'红红火火恍恍惚惚'
-            }
-            ]
-
-         },
-         {
-            id:'2',
-            content:'天上一只鹅，地上一只鹅，天上那只肥鹅鹅爱上地上那只瘦鹅鹅，鹅飞鹅打鹅碰鹅。',
-            time:'2018-10-21 10:21',
-            imgList:[require('../assets/img/timeAlbum/6.jpg'),require('../assets/img/timeAlbum/7.jpg'),require('../assets/img/timeAlbum/8.jpg'),require('../assets/img/timeAlbum/9.jpg'),require('../assets/img/timeAlbum/10.jpg')],
-            commentList:[
-            {
-              name:'一名不愿透露姓名的网友',
-              comment:'红红火火恍恍惚惚'
-            },
-            {
-              name:'一名不愿透露姓名的网友2',
-              comment:'红红火火恍恍惚惚'
-            }
-            ]
-
-         },{
-            id:'3',
-            content:'天上一只鹅，地上一只鹅，天上那只肥鹅鹅爱上地上那只瘦鹅鹅，鹅飞鹅打鹅碰鹅。',
-            time:'2018-10-21 10:21',
-            imgList:[require('../assets/img/timeAlbum/11.jpg'),require('../assets/img/timeAlbum/12.jpg'),require('../assets/img/timeAlbum/13.jpg'),require('../assets/img/timeAlbum/14.jpg'),require('../assets/img/timeAlbum/15.jpg')],
-            commentList:[
-            {
-              name:'一名不愿透露姓名的网友',
-              comment:'红红火火恍恍惚惚'
-            },
-            {
-              name:'一名不愿透露姓名的网友2',
-              comment:'红红火火恍恍惚惚'
-            }
-            ]
-         },
-         ]
+         pageIndex:1,
+         Data:[],
+         commentIndex:null,
+         commentContent:{}
     }
   },
   computed:{
@@ -134,9 +87,13 @@ export default {
        console.log("status "+status);
        this.bottomStatus = status;
     },
-    addComment(id){
+    addComment(id,index){
        this.item_id=id;
        this.popupVisible=true;
+       this.commentIndex=index;
+    },
+    successSubmit(data){
+      this.Data[this.commentIndex].commentList.push(data);
     },
     hideDialog(){
       this.popupVisible=false;
@@ -163,26 +120,56 @@ export default {
     },
     loadBottom(){
         console.log('loadBottom');
-        // this.allLoaded = true;// 若数据已全部获取完毕
-        const count=this.Data.length;
-        for (var i = 0; i < count; i++) {
-          this.Data.push(this.Data[i]);
-        }
-        this.$refs.loadmore.onBottomLoaded();
+        this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+        this.pageIndex++;
+        const that=this;
+        axios.get(this.host+'/api/whimsy?pageIndex='+this.pageIndex)
+        .then(function(response){
+             console.log(response);
+             let data=response.data.rows;
+             for (var i = 0; i < data.length; i++) {
+               data[i].img_src=data[i].img_src.split('&')
+               for (var j = 0; j <  data[i].img_src.length; j++) {
+                  data[i].img_src[j]=that.host+data[i].img_src[j]
+               }
+             }
+             if(data.length>0){
+                for (var i = 0; i < data.length; i++) {
+                  that.Data.push(data[i])
+                }
+             }
+             if(data.length<10){
+                  that.allLoaded = true;// 若数据已全部获取完毕
+             }
+             that.$refs.loadmore.onBottomLoaded();
+        })
+        .catch(function(error){
+            console.log(error);
+        })
+        .finally(function(){
+          that.$indicator.close();
+        })
+        
     }
   },
   mounted(){
-      this.imgWidth=(document.getElementsByClassName("section")[0].clientWidth-24)/3;
+      this.imgWidth=(document.getElementById("container").clientWidth-44)/3;
       this.wrapHeight=document.documentElement.clientHeight-document.getElementById('header').clientHeight; 
   },
   created(){
       this.$indicator.open({text: '',spinnerType: 'double-bounce'});
       const that=this;
-      axios.get(that.host+'/api/article?pageIndex=1')
+      axios.get(this.host+'/api/whimsy?pageIndex='+this.pageIndex)
       .then(function(response){
            console.log(response);
-           let data=response.data;
-           that.Data=data.rows;
+           let data=response.data.rows;
+           for (var i = 0; i < data.length; i++) {
+             data[i].img_src=data[i].img_src.split('&')
+             for (var j = 0; j <  data[i].img_src.length; j++) {
+                data[i].img_src[j]=that.host+data[i].img_src[j]
+             }
+           }
+           that.Data=data;
       })
       .catch(function(error){
           console.log(error);

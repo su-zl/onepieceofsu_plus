@@ -23,10 +23,11 @@
 <script>
 import {Popup,Toast} from 'mint-ui'
 import Vue from 'vue'
+const axios = require('axios');
 Vue.component(Popup.name, Popup)
 export default {
   name:'CommentDialog',
-  props:['popupVisible','type'],
+  props:['popupVisible','type','itemId'],
   methods:{
     addComment(){
        this.$emit('hideDialog')
@@ -39,8 +40,31 @@ export default {
               duration: 2000
             });
          }else{
-           this.$emit('hideDialog')
-           console.log(this.$refs.content.innerHTML)
+            this.$emit('hideDialog');
+            this.$indicator.open({text: '提交中...',spinnerType: 'double-bounce'});
+            const that=this;
+            const content=this.$refs.content.innerHTML;
+            const type=this.type;
+            const name='test';
+            const item_id=this.itemId;
+            const date=this.dateToStr(new Date());
+            axios.post(this.host+'/api/addComment',{content,type,name,date,item_id})
+            .then(function(response){
+                 console.log(response);
+                 that.$emit('successSubmit',{content,name});  
+            })
+            .catch(function(error){
+                console.log(error);
+                Toast({
+                  message: '提交失败',
+                  position: 'bottom',
+                  duration: 1000
+                });
+            })
+            .finally(function(){
+              that.$indicator.close();
+            }) 
+           
          }
     },
     showPlaceholder(event){
@@ -53,7 +77,36 @@ export default {
         if(event.target.children.length>0){
             event.target.innerHTML='';
         }
-    }  
+    },
+    //日期转换
+        dateToStr(datetime){ 
+             var year = datetime.getFullYear();
+             var month = datetime.getMonth()+1;//js从0开始取
+             var date = datetime.getDate(); 
+             var hour = datetime.getHours(); 
+             var minutes = datetime.getMinutes(); 
+             var second = datetime.getSeconds();
+             
+             if(month<10){
+              month = "0" + month;
+             }
+             if(date<10){
+              date = "0" + date;
+             }
+             if(hour <10){
+              hour = "0" + hour;
+             }
+             if(minutes <10){
+              minutes = "0" + minutes;
+             }
+             if(second <10){
+              second = "0" + second ;
+             }       
+             var time = year+"-"+month+"-"+date
+             // +' '+hour+':'+minutes+':'+second; 
+             //2009-06-12 12:00:00
+             return time;
+        }
    },
    computed:{
       title(){
@@ -68,6 +121,9 @@ export default {
             return '留言';
             break;
       }
+    },
+    host(){
+      return this.$store.state.host
     }
    },
    created(){

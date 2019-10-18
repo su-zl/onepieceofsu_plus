@@ -29,7 +29,7 @@
     </div>
 
       
-    <CommentDialog :popupVisible="popupVisible" type="message" @hideDialog="hideDialog"></CommentDialog>
+    <CommentDialog :popupVisible="popupVisible" type="message" itemId='' @hideDialog="hideDialog" @successSubmit="reload" ></CommentDialog>
   </div>
 </template>
 
@@ -37,6 +37,7 @@
 import SideMenu from '../components/SideMenu.vue'
 import {Indicator } from 'mint-ui'
 import CommentDialog from '../components/CommentDialog.vue'
+const axios = require('axios');
 
 export default {
   name:'message',
@@ -48,37 +49,17 @@ export default {
     return{
          container:'',
          loading:'visible',
-         imgWidth:null,
          popupVisible:false,
          allLoaded:false,
          wrapHeight:300,
          bottomStatus:'pull',
-         Data:[
-         {
-            id:'0',
-            content:'天上一只鹅，地上一只鹅，天上那只肥鹅鹅爱上地上那只瘦鹅鹅，鹅飞鹅打鹅碰鹅。',
-            date:'2018-10-21 ',
-            name:"一名不愿透露姓名的网友"
-         },
-         {
-            id:'1',
-            content:'天上一只鹅，地上一只鹅，天上那只肥鹅鹅爱上地上那只瘦鹅鹅，鹅飞鹅打鹅碰鹅。',
-            date:'2018-10-21 ',
-            name:"一名不愿透露姓名的网友"
-         },
-         {
-            id:'2',
-            content:'天上一只鹅，地上一只鹅，天上那只肥鹅鹅爱上地上那只瘦鹅鹅，鹅飞鹅打鹅碰鹅。',
-            date:'2018-10-21 ',
-            name:"一名不愿透露姓名的网友"
-         },
-         {
-            id:'3',
-            content:'天上一只鹅，地上一只鹅，天上那只肥鹅鹅爱上地上那只瘦鹅鹅，鹅飞鹅打鹅碰鹅。',
-            date:'2018-10-21 ',
-            name:"一名不愿透露姓名的网友"
-         }
-         ]
+         pageIndex:1,
+         Data:[]
+    }
+  },
+  computed:{
+    host(){
+      return this.$store.state.host
     }
   },
   methods:{
@@ -88,27 +69,57 @@ export default {
       },
       loadBottom(){
         console.log('loadBottom');
-        // this.allLoaded = true;// 若数据已全部获取完毕
-        const count=this.Data.length;
-        for (var i = 0; i < count; i++) {
-          this.Data.push(this.Data[i]);
-        }
-        this.$refs.loadmore.onBottomLoaded();
+        this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+        this.pageIndex++;
+        const that=this;
+        axios.get(this.host+'/api/message?pageIndex='+this.pageIndex)
+        .then(function(response){
+            console.log(response);
+            let data=response.data.rows;
+            for (var i = 0; i < data.length; i++) {
+              that.Data.push(data[i])
+            }
+            if(data.length<10){
+               that.allLoaded = true;// 若数据已全部获取完毕
+            }
+            that.$refs.loadmore.onBottomLoaded();
+        })
+        .catch(function(error){
+            console.log(error);
+        })
+        .finally(function(){
+          that.$indicator.close();
+        }) 
+        
       },
       leaveMessage(){
         this.popupVisible=true;
       },
       hideDialog(){
        this.popupVisible=false;
-    } 
+      },
+      reload(){
+         window.location.reload();
+      }
   },
   mounted(){
-      this.imgWidth=(document.getElementsByClassName("section")[0].clientWidth-24)/3;
-      this.wrapHeight=document.documentElement.clientHeight-document.getElementById('header').clientHeight-document.getElementById('tips').clientHeight;
-      Indicator.open('加载中...')
-      setTimeout(()=>{
-        Indicator.close(); 
-      },500)
+      this.wrapHeight=document.documentElement.clientHeight-document.getElementById('header').clientHeight-document.getElementById('tips').offsetHeight ;
+  },
+  created(){
+      this.$indicator.open({text: '',spinnerType: 'double-bounce'});
+      const that=this;
+      axios.get(this.host+'/api/message?pageIndex='+this.pageIndex)
+      .then(function(response){
+           console.log(response);
+           let data=response.data.rows;
+           that.Data=data;
+      })
+      .catch(function(error){
+          console.log(error);
+      })
+      .finally(function(){
+        that.$indicator.close();
+      }) 
   }
 }
 </script>
