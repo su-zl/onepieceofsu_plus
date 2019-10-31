@@ -9,7 +9,7 @@
     <SideMenu color="#fff"></SideMenu>
     <div id="library" v-bind:style="{marginTop:libraryOffsetTop+'px'}">
         <div>
-           <div v-for="(item,index) in Data"  :class="{list:true,selected:selectBookId==item.id}" @click="chooseBook(index)"><img :src="item.img_src"></div>
+           <div v-for="(item,index) in Data"  :class="{list:true,selected:selectBookId==item.id}" @click="chooseBook(index)"><img @load="imgLoad" :src="item.img_src"></div>
         </div>
     </div>
     <div v-if="currentPageData" class="section"
@@ -105,45 +105,34 @@ export default {
                            this.libraryOffsetTop=this.priBottom+this.priTop;
                            this.preMove=null;
                        }
-                  }else{
-                       // console.log(event.changedTouches[0].clientY)
-                       // if(this.libraryOffsetTop>12 && this.sectionOffset()<118){
-                       //       this.libraryOffsetTop-=1;
-                       //       this.preMove=event.changedTouches[0].clientY
-                       // }else{
-                       //     this.libraryOffsetTop=-83;
-                       //     this.preMove=null;
-                       //     // document.body.scrollTop=-153;
-                       // }
                   }
               }
-          }else if(this.sectionOffset()<this.priBottom && this.libraryOffsetTop>this.priTop){
-                  if(this.libraryOffsetTop>this.priTop){
-                    this.libraryOffsetTop-=1;
-                    this.preMove=event.changedTouches[0].clientY
-                  }else{
-                    // this.libraryOffsetTop=-83;
-                    // this.preMove=null;
-                    // document.documentElement.scrollTop=0;
-                    // document.body.scrollTop=0;
-                  }
+          }else if(this.sectionOffset()>0 && this.libraryOffsetTop>this.priTop){
+                   this.preMove=null;
           }
         },
         hideLibrary(){
-              console.log(this.sectionOffset());
-              if(this.sectionOffset()>=Math.abs(this.priTop) && this.libraryOffsetTop>this.priTop){
-                    this.libraryOffsetTop=this.priTop;
-                    this.preMove=null;
-                    document.documentElement.scrollTop=0;
-                    document.body.scrollTop=0;
-              }
+          if(this.sectionOffset()>0 && this.libraryOffsetTop>this.priTop){
+              const that=this;
+              const t=setInterval(()=>{
+                   if(that.libraryOffsetTop>that.priTop){
+                    if(that.libraryOffsetTop-that.priTop>2){
+                         that.libraryOffsetTop-=(that.libraryOffsetTop-that.priTop)/10;
+                    }else{
+                         that.libraryOffsetTop-=1;
+                    }
+                   }else{
+                      clearInterval(t);
+                      this.preMove=null;
+                   }
+              },10)
+          }
+        },
+        imgLoad(){
+          this.priTop=document.getElementById('header').clientHeight-document.getElementById('library').clientHeight;
+          this.priBottom=document.getElementById('library').clientHeight;
+          this.libraryOffsetTop=this.priTop;
         }
-  },
-  updated(){
-        this.priTop=document.getElementById('header').clientHeight-document.getElementById('library').clientHeight;
-        this.priBottom=document.getElementById('library').clientHeight;
-        this.libraryOffsetTop=this.priTop;
-
   },
   created(){
     this.$indicator.open({text: '',spinnerType: 'double-bounce'});

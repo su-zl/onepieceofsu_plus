@@ -9,11 +9,11 @@
     <SideMenu color="#fff"></SideMenu>
     <div id="library" v-bind:style="{marginTop:libraryOffsetTop+'px'}">
         <div>
-           <div v-for="(item,index) in Data"  :class="{list:true,selected:selectBookId==item.id}" @click="chooseBook(index)"><img :src="item.img_src"></div>
+           <div v-for="(item,index) in Data"  :class="{list:true,selected:selectBookId==item.id}" @click="chooseBook(index)"><img @load="imgLoad" :src="item.img_src"></div>
         </div>
     </div>
     <div v-if="currentPageData" class="section"
-     @touchmove="isShowLibrary" @touchend="hideLibraay" >
+     @touchmove="isShowLibrary" @touchend="hideLibrary" >
            <div style="display: flex;padding:20px 10px 0px 10px;justify-content:space-between;" class="title">
               <div>
                 <h2>{{currentPageData.title}}</h2>
@@ -76,7 +76,9 @@ export default {
          libraryOffsetTop:-83,
          preMove:null,
          Data:null,
-         currentPageData:null
+         currentPageData:null,
+         priTop:null,
+         priBottom:null
     }
   },
   computed:{
@@ -99,9 +101,8 @@ export default {
 
           document.documentElement.scrollTop=0;
           document.body.scrollTop=0;
-          this.libraryOffsetTop=-83;
+          this.libraryOffsetTop=this.priTop;
           this.preMove=null;
-
         },
         sectionOffset(){
            return document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
@@ -117,49 +118,37 @@ export default {
                           this.libraryOffsetTop+=1;
                           this.preMove=event.changedTouches[0].clientY
                        }else{
-                           this.libraryOffsetTop=35;
+                           this.libraryOffsetTop=this.priBottom+this.priTop;
                            this.preMove=null;
                        }
-                  }else{
-                       // console.log(event.changedTouches[0].clientY)
-                       // if(this.libraryOffsetTop>12 && this.sectionOffset()<118){
-                       //       this.libraryOffsetTop-=1;
-                       //       this.preMove=event.changedTouches[0].clientY
-                       // }else{
-                       //     this.libraryOffsetTop=-83;
-                       //     this.preMove=null;
-                       //     // document.body.scrollTop=-153;
-                       // }
                   }
               }
-          }else if(this.sectionOffset()<118 && this.libraryOffsetTop>-83){
-                  if(this.libraryOffsetTop>-83){
-                    this.libraryOffsetTop-=1;
-                    this.preMove=event.changedTouches[0].clientY
-                  }else{
-                    // this.libraryOffsetTop=-83;
-                    // this.preMove=null;
-                    // document.documentElement.scrollTop=0;
-                    // document.body.scrollTop=0;
-                  }
+          }else if(this.sectionOffset()>0 && this.libraryOffsetTop>this.priTop){
+                   this.preMove=null;
           }
         },
-        hideLibraay(){
-              console.log(this.sectionOffset());
-              if(this.sectionOffset()>=83 && this.libraryOffsetTop>-83){
-                    this.libraryOffsetTop=-83;
-                    this.preMove=null;
-                    document.documentElement.scrollTop=0;
-                    document.body.scrollTop=0;
+        hideLibrary(){
+              if(this.sectionOffset()>0 && this.libraryOffsetTop>this.priTop){
+                  const that=this;
+                  const t=setInterval(()=>{
+                       if(that.libraryOffsetTop>that.priTop){
+                        if(that.libraryOffsetTop-that.priTop>2){
+                             that.libraryOffsetTop-=(that.libraryOffsetTop-that.priTop)/5;
+                        }else{
+                             that.libraryOffsetTop=that.priTop;
+                        }
+                       }else{
+                          clearInterval(t);
+                          this.preMove=null;
+                       }
+                  },10)
               }
+        },
+        imgLoad(){
+          this.priTop=document.getElementById('header').clientHeight-document.getElementById('library').clientHeight;
+          this.priBottom=document.getElementById('library').clientHeight;
+          this.libraryOffsetTop=this.priTop;
         }
-  },
-  mounted(){
-
-          // this.$indicator.open({text: '',spinnerType: 'double-bounce'});
-          // setTimeout(()=>{
-          //   this.$indicator.close();
-          // },500)
   },
   created(){
     this.$indicator.open({text: '',spinnerType: 'double-bounce'});

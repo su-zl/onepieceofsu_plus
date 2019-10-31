@@ -4,13 +4,19 @@
        <i class="bars" :style="{color:color?color:'#000'}"   @click="showSidebar"><font-awesome-icon icon="bars" /></i>
        <div>
            <div style="overflow:hidden;text-align:center;margin-top:20px;">
-              <img :src="img_src" :style="{width:imgWidth+'px',borderRadius:'50%'}">
+              <img :src="img_src" @click="showFileChoose" :style="{width:imgWidth+'px',borderRadius:'50%'}">
            </div>
            <transition-group name="flip-list"> 
               <div  style="text-align:center;" key="1">
                 <mt-button type="default" style="margin-bottom:10px;" size="small" v-show="!show_Submit" @click="showSubmit">登录</mt-button>
                 <p v-show="person_name">一位不愿透露名字的网友</p>
+                <form style="display:none;" action="http://localhost:3000/api/uploadImage" method="post" enctype="multipart/form-data">
+                  <input type="file" name="file" ref="file" accept="image/*" :value="uploadImage" @change="hasChoose" />
+                  <input type="text" name="username" v-model="username"   />
+                  <input type="submit" ref="submit" value="提交"/>
+                 </form>
               </div>
+              
               <div  key="2" v-show="show_Submit">
                   <input style="width:100%;border:none;height:35px;padding:0px 10px;margin-top:10px;" type="text" placeholder="一位不愿透露名字的网友?" v-model="username" ref="username">
                   <div style="margin-top:10px;text-align:center;">
@@ -127,7 +133,8 @@ export default {
       mid:false,
       imgWidth:null,
       show_Submit:false,
-      username:''
+      username:'',
+      uploadImage:''
     }
   },
   computed:{
@@ -163,6 +170,12 @@ export default {
      },
      complete(){
        console.log("complete");
+     },
+     showFileChoose(){
+         this.$refs.file.click();
+     },
+     hasChoose(event){
+          console.log(event.target.files);
      },
      showSidebar(){
           this.mid=true;
