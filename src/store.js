@@ -6,13 +6,13 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
       person_name:'',
-      person_src:'',
-      md5_key:'123456',
+      person_src:'/person/primary/person.jpg',
       host:'http://localhost:3000'
   },
   mutations: {
      loginSuccess(state,value){
-        state.selectRadioType=value
+        state.person_name=value.name;
+        state.person_src=value.path?value.path:'/person/primary/person.jpg';
      }
   },
   actions: {

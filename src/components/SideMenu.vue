@@ -3,15 +3,48 @@
       <div class="sidebar" v-bind:style="{right:sidebarRight+'px'}">
        <i class="bars" :style="{color:color?color:'#000'}"   @click="showSidebar"><font-awesome-icon icon="bars" /></i>
        <div>
-           <div style="overflow:hidden;text-align:center;margin-top:20px;">
-              <img :src="img_src" @click="showFileChoose" :style="{width:imgWidth+'px',borderRadius:'50%'}">
+           <div v-show="!option.img" style="overflow:hidden;text-align:center;margin-top:20px;position:relative">
+              <img :src="img_src"  :style="{width:imgWidth+'px',height:imgWidth+'px',borderRadius:'50%'}">
+              <transition enter-active-class="animated tada" leave-active-class="animated bounceOutRight">
+                <div v-show="show_Submit" @click="showFileChoose"  style="position:absolute;width:100%;height:30%;text-align:center;bottom:0px;background-color:rgba(238,238,238,0.5);">
+                  <font-awesome-icon style="color:#fff;"  icon="images" />
+                </div>
+              </transition>
            </div>
+           <div class="cropper" v-show="option.img" :style="{position:'absolute',width:windowWidth+'px',height:windowHeight+'px',left:(260-windowWidth)+'px',zIndex:'100'}">
+              <div>
+                 <div style="background-color:#fff;">
+                   <mt-button type="default" style="margin:5px 5px;" size="small"  @click="cropCancel">取消</mt-button>
+                   <mt-button type="default" style="margin:5px 5px;float:right;" size="small"  @click="cropImg">确定</mt-button>
+                 </div>
+              </div>
+              <vueCropper 
+              ref="cropper"
+              :img="option.img"
+              :outputSize="option.size"
+              :outputType="option.outputType"
+              :info="true"
+              :full="option.full"
+              :canMove="option.canMove"
+              :canMoveBox="option.canMoveBox"
+              :canScale="option.canScale"
+              :original="option.original"
+              :autoCrop="option.autoCrop"
+              :autoCropWidth="option.autoCropWidth"
+              :autoCropHeight="option.autoCropHeight"
+              :fixedBox="option.fixedBox"
+              :centerBox="option.centerBox"
+              :maxImgSize="option.maxImgSize"
+              @imgLoad="imgLoad"
+            ></vueCropper>
+           </div>
+           
            <transition-group name="flip-list"> 
               <div  style="text-align:center;" key="1">
-                <mt-button type="default" style="margin-bottom:10px;" size="small" v-show="!show_Submit" @click="showSubmit">登录</mt-button>
-                <p v-show="person_name">一位不愿透露名字的网友</p>
-                <form style="display:none;" action="http://localhost:3000/api/uploadImage" method="post" enctype="multipart/form-data">
-                  <input type="file" name="file" ref="file" accept="image/*" :value="uploadImage" @change="hasChoose" />
+                <mt-button type="default" style="margin-bottom:10px;" size="small" v-show="!show_Submit&&!person_name" @click="showSubmit">登录</mt-button>
+                <p v-show="person_name" style="font-size:0.9em;font-weight:bolder;padding:5px;">{{person_name}}</p>
+                <form style="display:none;" :action="actionAddress" method="post" enctype="multipart/form-data">
+                  <input type="file" name="file" ref="file" accept="image/*"  @change="hasChoose" />
                   <input type="text" name="username" v-model="username"   />
                   <input type="submit" ref="submit" value="提交"/>
                  </form>
@@ -118,14 +151,19 @@
 import Vue from 'vue'
 import { Button } from 'mint-ui';
 import { Field } from 'mint-ui';
+import { mapMutations } from 'vuex'
+import {Toast} from 'mint-ui'
+import { VueCropper }  from 'vue-cropper' 
 
 Vue.component(Field.name, Field);
 Vue.component(Button.name, Button);
-
-// import  Velocity from 'velocity-animate'
+const axios = require('axios');
 
 export default {
   name:'SideMenu',
+  components:{
+    VueCropper
+  },
   props:['color'],
   data(){
     return {
@@ -134,7 +172,27 @@ export default {
       imgWidth:null,
       show_Submit:false,
       username:'',
-      uploadImage:''
+      img_src:'',
+      option: {
+          img:'',
+          outputSize:1, //剪切后的图片质量（0.1-1）
+          outputType: 'jpeg',
+          canMove: true, 
+          original: false, 
+          canMoveBox: true, 
+          canScale:true,
+          autoCrop: true, 
+          autoCropWidth: 100, 
+          autoCropHeight: 100, 
+          fixedBox: true,
+          centerBox:true,
+          maxImgSize:260
+        },
+      windowWidth:'',
+      windowHeight:'',
+      fileName:'',
+      cropBlobData:'',
+      cropBlobSrc:''
     }
   },
   computed:{
@@ -147,15 +205,12 @@ export default {
      person_name(){
        return this.$store.state.person_name;
      },
-     img_src(){
-         if(!this.person_name){
-            return this.host+'/person/primary/person.jpg'
-         }else{
-            return this.host+this.person_src;
-         }
+     actionAddress(){
+      return this.host+'/api/loginWithImg';
      }
   },
   methods:{
+     ...mapMutations(['loginSuccess']),
      showSubmit(){
         this.show_Submit=true;    
         setTimeout(()=>{
@@ -165,17 +220,76 @@ export default {
      hideSubmit(){
          this.show_Submit=false;    
      },
-     submit(){
+     submit(){  
+         if(this.cropBlobData){
+            const that=this;
+            let formData = new FormData();
+            formData.append('username',this.username);
+            formData.append('file',this.cropBlobData,this.fileName);
+            axios.post(this.host+'/api/loginWithImg',formData)
+            .then(function(response){
+                 console.log(response);
+                 that.loginSuccess(response.data);
+                 that.hideSubmit();
+                 // that.$emit('successSubmit',{content,name});  
+            })
+            .catch(function(error){
+                console.log(error);
+                Toast({
+                  message: '有点问题...',
+                  position: 'bottom',
+                  duration: 1000
+                });
+            })
+            .finally(function(){
 
-     },
-     complete(){
-       console.log("complete");
+            }) 
+         }else{
+            this.loginSuccess({name:this.username});
+            this.hideSubmit();  
+         }
      },
      showFileChoose(){
-         this.$refs.file.click();
+         if(!this.person_name){
+             this.$refs.file.click();
+         }   
      },
      hasChoose(event){
-          console.log(event.target.files);
+          this.fileName=event.target.files[0].name;
+          if(!this.username){
+              this.username='一位不愿透露名字的网友'
+          }
+          //读取本地文件
+          const that=this;
+          const reader = new FileReader(); 
+          reader.readAsArrayBuffer(event.target.files[0]);
+          reader.onload=(e)=>{
+            if (typeof e.target.result === 'object') { 
+            // 把Array Buffer转化为blob 如果是base64不需要 
+              that.option.img = window.URL.createObjectURL(new Blob([e.target.result])) 
+            }else{
+              that.option.img=e.target.result;
+            }
+            //清除value使能重选
+            that.$refs.file.value='';
+          }
+ 
+     },
+     imgLoad(msg){
+       console.log('imgLoad')
+       console.log(msg) 
+     },
+     cropCancel(){
+         this.option.img='';
+     },
+     cropImg(){
+          // 获取截图的blob数据
+          this.$refs.cropper.getCropBlob((data) => {
+            this.cropBlobData = data;
+            this.cropBlobSrc = window.URL.createObjectURL(data);
+            this.img_src=this.cropBlobSrc;
+            this.option.img='';
+          })
      },
      showSidebar(){
           this.mid=true;
@@ -209,6 +323,10 @@ export default {
   mounted(){
       this.sidebarRight=document.getElementsByClassName('sideContent')[0].clientWidth*-1;
       this.imgWidth=document.getElementsByClassName('sideContent')[0].clientWidth/2.5;
+      this.windowWidth=document.documentElement.clientWidth;
+      this.windowHeight=document.documentElement.clientHeight;
+
+      this.img_src = this.host+this.person_src;
   }
 }
 </script>
@@ -270,5 +388,9 @@ export default {
       }
       .flip-list-move {
           transition: transform 1s;
+      }
+      .cropper{
+        width:260px;
+        height:260px;
       }
       </style>
