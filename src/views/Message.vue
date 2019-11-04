@@ -3,7 +3,7 @@
      <div id="header">
         <h3>留言板</h3>
     </div> 
-    <SideMenu color="#fff"></SideMenu>
+    <SideMenu :color="SideMenuColor"></SideMenu>
     <div id="tips" @click="leaveMessage">
       <p style="font-size:0.7em;">留个言吧......</p>
     </div>
@@ -29,13 +29,13 @@
     </div>
 
       
-    <CommentDialog :popupVisible="popupVisible" type="message" itemId='' @hideDialog="hideDialog" @successSubmit="reload" ></CommentDialog>
+    <CommentDialog :popupVisible="popupVisible" type="message" itemId='' @hideDialog="hideDialog" @successSubmit="success" ></CommentDialog>
   </div>
 </template>
 
 <script>
 import SideMenu from '../components/SideMenu.vue'
-import {Indicator } from 'mint-ui'
+import {Indicator,Toast } from 'mint-ui'
 import CommentDialog from '../components/CommentDialog.vue'
 const axios = require('axios');
 
@@ -54,12 +54,16 @@ export default {
          wrapHeight:300,
          bottomStatus:'pull',
          pageIndex:1,
-         Data:[]
+         Data:[],
+         SideMenuColor:'#fff'
     }
   },
   computed:{
     host(){
       return this.$store.state.host
+    },
+    person_name(){
+      return this.$store.state.person_name
     }
   },
   methods:{
@@ -93,13 +97,26 @@ export default {
         
       },
       leaveMessage(){
-        this.popupVisible=true;
+        if(!this.person_name){
+            Toast({
+              message: '需要先登录哦',
+              position: 'bottom',
+              duration: 500
+            });
+            setTimeout(()=>{
+               document.getElementsByClassName('bars')[0].click();
+            },250)
+            
+        }else{
+           this.popupVisible=true;
+        }
       },
       hideDialog(){
        this.popupVisible=false;
       },
-      reload(){
-         window.location.reload();
+      success(data){
+        this.Data.unshift(data);
+         // window.location.reload();
       }
   },
   mounted(){

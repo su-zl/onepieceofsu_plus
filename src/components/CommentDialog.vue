@@ -45,13 +45,13 @@ export default {
             const that=this;
             const content=this.$refs.content.innerHTML;
             const type=this.type;
-            const name='test';
+            const name=this.person_name;
             const item_id=this.itemId;
             const date=this.dateToStr(new Date());
             axios.post(this.host+'/api/addComment',{content,type,name,date,item_id})
             .then(function(response){
                  console.log(response);
-                 that.$emit('successSubmit',{content,name});  
+                 that.$emit('successSubmit',{content,name,date});  
             })
             .catch(function(error){
                 console.log(error);
@@ -124,6 +124,9 @@ export default {
     },
     host(){
       return this.$store.state.host
+    },
+    person_name(){
+      return this.$store.state.person_name
     }
    },
    created(){

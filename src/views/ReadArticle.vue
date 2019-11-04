@@ -3,8 +3,8 @@
      <div id="header">
         <h3 style="text-align: center;margin:0 auto;">详情</h3>
     </div> 
-    <SideMenu color="#fff"></SideMenu>
-    <div id="container">
+    <SideMenu :color="color"></SideMenu>
+    <div id="container" @touchmove="changeColor">
          <div v-for="item in Data.article" v-bind:class="item.class">{{item.content}}</div>
          <div style="border-bottom:1px solid #aaa"></div>
          <div>
@@ -25,7 +25,7 @@
 <script>
 import SideMenu from '../components/SideMenu.vue'
 import CommentDialog from '../components/CommentDialog.vue'
-import {Indicator } from 'mint-ui'
+import {Indicator,Toast } from 'mint-ui'
 const axios = require('axios');
 
 export default {
@@ -39,7 +39,9 @@ export default {
          loading:'visible',
          popupVisible:false,
          Data:[],
-         item_id:null
+         item_id:null,
+         scroolHeight:null,
+         color:'#fff',
         }
   },
   computed:{
@@ -48,19 +50,48 @@ export default {
     },
     host(){
       return this.$store.state.host;
+    },
+    person_name(){
+      return this.$store.state.person_name
     }
   },
   methods:{
     addComment(){
-       this.item_id=this.id;
-       this.popupVisible=true;
+      if(!this.person_name){
+          Toast({
+            message: '需要先登录哦',
+            position: 'bottom',
+            duration: 500
+          });
+          setTimeout(()=>{
+             document.getElementsByClassName('bars')[0].click();
+          },250)
+          
+      }else{
+        this.item_id=this.id;
+        this.popupVisible=true;
+      }
     },
     hideDialog(){
        this.popupVisible=false;
     },
     successSubmit(data){
        this.Data.commentList.push(data);
-    } 
+    },
+    sectionOffset(){
+             return document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+    },
+    changeColor(){
+       console.log(this.sectionOffset());
+       if(this.sectionOffset()>this.scroolHeight){
+            this.color='#000'
+       }else{
+            this.color='#fff'
+       }
+    }
+  },
+  mounted(){
+        this.scroolHeight=document.getElementById("header").clientHeight;
   },
   created(){
       this.$indicator.open({text: '',spinnerType: 'double-bounce'});

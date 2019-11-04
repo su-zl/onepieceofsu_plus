@@ -32,6 +32,10 @@
                      </div>
                  </div>
               </li>
+              <li v-if="pullLoad">
+                <div style="border:1px solid #aaa;"></div>
+                <p style="text-align:center">End</p>
+              </li>
           </ul> 
           <div slot="bottom" class="mint-loadmore-bottom">
             <span id="animate" v-show="bottomStatus !== 'loading'" :class="{ 'rotate': bottomStatus === 'pull' }">↑</span>
@@ -69,6 +73,7 @@ export default {
          imgWidth:null,
          item_id:null,
          allLoaded:false,
+         pullLoad:false,
          wrapHeight:1000,
          bottomStatus:'pull',
          pageIndex:1,
@@ -80,6 +85,9 @@ export default {
   computed:{
     host(){
       return this.$store.state.host;
+    },
+    person_name(){
+      return this.$store.state.person_name
     }
   },
   methods:{
@@ -88,9 +96,21 @@ export default {
        this.bottomStatus = status;
     },
     addComment(id,index){
-       this.item_id=id;
-       this.popupVisible=true;
-       this.commentIndex=index;
+      if(!this.person_name){
+          Toast({
+            message: '需要先登录哦',
+            position: 'bottom',
+            duration: 500
+          });
+          setTimeout(()=>{
+             document.getElementsByClassName('bars')[0].click();
+          },250)
+          
+      }else{
+        this.item_id=id;
+        this.popupVisible=true;
+        this.commentIndex=index;
+      }
     },
     successSubmit(data){
       this.Data[this.commentIndex].commentList.push(data);
@@ -140,6 +160,7 @@ export default {
              }
              if(data.length<10){
                   that.allLoaded = true;// 若数据已全部获取完毕
+                  that.pullLoad=true;
              }
              that.$refs.loadmore.onBottomLoaded();
         })
@@ -168,6 +189,9 @@ export default {
              for (var j = 0; j <  data[i].img_src.length; j++) {
                 data[i].img_src[j]=that.host+data[i].img_src[j]
              }
+           }
+           if(data.length<10){
+              that.allLoaded = true;// 若数据已全部获取完毕
            }
            that.Data=data;
       })

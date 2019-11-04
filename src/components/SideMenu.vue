@@ -3,6 +3,10 @@
       <div class="sidebar" v-bind:style="{right:sidebarRight+'px'}">
        <i class="bars" :style="{color:color?color:'#000'}"   @click="showSidebar"><font-awesome-icon icon="bars" /></i>
        <div>
+           <div style="position:absolute;top:5px;right:5px;font-size:0.6em;font-weight:bolder;color:#666;">
+             <i><font-awesome-icon icon="map-marker-alt" /></i>
+             <span style="margin-left:-5px;">{{city}}</span>
+           </div>
            <div v-show="!option.img" style="overflow:hidden;text-align:center;margin-top:20px;position:relative">
               <img :src="img_src"  :style="{width:imgWidth+'px',height:imgWidth+'px',borderRadius:'50%'}">
               <transition enter-active-class="animated tada" leave-active-class="animated bounceOutRight">
@@ -40,7 +44,7 @@
            </div>
            
            <transition-group name="flip-list"> 
-              <div  style="text-align:center;" key="1">
+              <div  style="text-align:center;margin-bottom:20px;" key="1">
                 <mt-button type="default" style="margin-bottom:10px;" size="small" v-show="!show_Submit&&!person_name" @click="showSubmit">登录</mt-button>
                 <p v-show="person_name" style="font-size:0.9em;font-weight:bolder;padding:5px;">{{person_name}}</p>
                 <form style="display:none;" :action="actionAddress" method="post" enctype="multipart/form-data">
@@ -142,7 +146,7 @@
                </li>   
            </ul>    -->
     </div>
-    <div v-show="mid" @click="hideSideBar" style="width: 100%;height: 200%;background-color: rgba(0,0,0,0.2);position: fixed;z-index: 98;">
+    <div v-show="mid" @click="hideSideBar" style="width: 100%;height: 200%;margin-top:-200px;background-color: rgba(0,0,0,0.2);position: fixed;z-index: 98;">
     </div>
   </div>
 </template>
@@ -207,10 +211,16 @@ export default {
      },
      actionAddress(){
       return this.host+'/api/loginWithImg';
+     },
+     weather(){
+        return this.$store.state.weather;
+     },
+     city(){
+        return this.$store.state.city;
      }
   },
   methods:{
-     ...mapMutations(['loginSuccess']),
+     ...mapMutations(['loginSuccess','whatWeather']),
      showSubmit(){
         this.show_Submit=true;    
         setTimeout(()=>{
@@ -221,7 +231,7 @@ export default {
          this.show_Submit=false;    
      },
      submit(){  
-         if(this.cropBlobData){
+         if(this.cropBlobData && this.username){
             const that=this;
             let formData = new FormData();
             formData.append('username',this.username);
@@ -245,8 +255,29 @@ export default {
 
             }) 
          }else{
-            this.loginSuccess({name:this.username});
-            this.hideSubmit();  
+            if(!this.username){
+                this.username='一位不愿透露名字的网友'
+                this.loginSuccess({name:this.username});
+            }else{
+                //曾登录用户头像
+                const that=this;
+                axios.get(this.host+'/api/getLoginUserImg?name='+this.username)
+                .then(function(response){
+                     console.log(response);
+                     let data=response.data;
+                     if(data.rows.length>0){
+                         that.loginSuccess(data.rows[0]);
+                         that.img_src = that.host+that.person_src;
+                     }
+                })
+                .catch(function(error){
+                    console.log(error);
+                })
+                .finally(function(){
+                  that.$indicator.close();
+                }) 
+            }  
+            this.hideSubmit();
          }
      },
      showFileChoose(){
@@ -256,9 +287,9 @@ export default {
      },
      hasChoose(event){
           this.fileName=event.target.files[0].name;
-          if(!this.username){
-              this.username='一位不愿透露名字的网友'
-          }
+          // if(!this.username){
+          //     this.username='一位不愿透露名字的网友'
+          // }
           //读取本地文件
           const that=this;
           const reader = new FileReader(); 
@@ -307,6 +338,8 @@ export default {
       },
       hideSideBar(){
         this.mid=false;
+        //防止快速点击
+        this.sidebarRight=0;
         let that=this;
         const sideAnime=setInterval(function(){
           if(that.sidebarRight>-260){
@@ -318,6 +351,7 @@ export default {
             clearInterval(sideAnime);
           }
         },20)
+        // return false;
       },
   },
   mounted(){
@@ -325,8 +359,21 @@ export default {
       this.imgWidth=document.getElementsByClassName('sideContent')[0].clientWidth/2.5;
       this.windowWidth=document.documentElement.clientWidth;
       this.windowHeight=document.documentElement.clientHeight;
-
       this.img_src = this.host+this.person_src;
+      //根据ip查询天气
+      const that=this;
+      axios.get('https://www.tianqiapi.com/api/?version=v6&appid=61328346&appsecret=cdcm4E8C&ip')
+      .then(function(response){
+           console.log(response);
+           that.whatWeather(response.data);
+      })
+      .catch(function(error){
+          console.log(error);
+      })
+      .finally(function(){
+        that.$indicator.close();
+      }) 
+
   }
 }
 </script>
