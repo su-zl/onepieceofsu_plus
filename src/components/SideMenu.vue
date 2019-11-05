@@ -4,7 +4,12 @@
        <i class="bars" :style="{color:color?color:'#000'}"   @click="showSidebar"><font-awesome-icon icon="bars" /></i>
        <div>
            <div style="position:absolute;top:5px;right:5px;font-size:0.6em;font-weight:bolder;color:#666;">
-             <i><font-awesome-icon icon="map-marker-alt" /></i>
+             <!-- <i><font-awesome-icon icon="map-marker-alt" /></i> -->
+              <i style="font-size:1.6em;">
+                  <svg class="icon" aria-hidden="true" ref="weather">
+                   <!--  <use xlink:href="#icon-sunny"></use> -->
+                  </svg>
+              </i>
              <span style="margin-left:-5px;">{{city}}</span>
            </div>
            <div v-show="!option.img" style="overflow:hidden;text-align:center;margin-top:20px;position:relative">
@@ -196,7 +201,8 @@ export default {
       windowHeight:'',
       fileName:'',
       cropBlobData:'',
-      cropBlobSrc:''
+      cropBlobSrc:'',
+      weatherIcon:''
     }
   },
   computed:{
@@ -366,6 +372,24 @@ export default {
       .then(function(response){
            console.log(response);
            that.whatWeather(response.data);
+           if(that.weather=='xue' || that.weather=='bingbao'){
+              that.weatherIcon = '#icon-snow-heavy'
+           }else if(that.weather=='lei'){
+              that.weatherIcon = '#icon-thunder-shower'
+           }else if(that.weather=='yin'){
+              that.weatherIcon = '#icon-cloudy'
+           }else if(that.weather=='shachen'){
+              that.weatherIcon = '#icon-dust'
+           }else if(that.weather=='wu'){
+              that.weatherIcon = '#icon-fog'
+           }else if(that.weather=='qing'){
+              that.weatherIcon = '#icon-sunny'
+           }else if(that.weather=='yun'){
+              that.weatherIcon = '#icon-cloudy-sunny'
+           }else if(that.weather=='yu'){
+              that.weatherIcon = '#icon-rain-heavy'
+           }
+           that.$refs.weather.innerHTML=`<use xlink:href=${that.weatherIcon}></use>`;
       })
       .catch(function(error){
           console.log(error);
@@ -373,7 +397,7 @@ export default {
       .finally(function(){
         that.$indicator.close();
       }) 
-
+      
   }
 }
 </script>
