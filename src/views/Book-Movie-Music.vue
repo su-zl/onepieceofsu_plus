@@ -9,8 +9,8 @@
            <i ref="book"><font-awesome-icon icon="book"/></i>          
         </div>
         <div class="content">
-            <h4>书籍是人类进步的阶梯.</h4>
-            <p>--高尔基</p>
+            <!-- <h4>书籍是人类进步的阶梯.</h4> -->
+            <p>读书最多的时候应该是在大学,现在大部分也和书本一起还回了老图书馆。回顾看来,一本书潜移默化的影响是很大的,安静的琢磨中形成的思维通道,就像水流冲刷平原,虽然水流走,但河道已经成型。</p>
         </div>
     </div> 
     <div class="container" @click="chooseFilm" v-bind:style="{padding:container}">
@@ -18,8 +18,8 @@
         <i ref="film"><font-awesome-icon icon="film" /></i>
       </div>
       <div class="content">
-        <h4>电影是人类进步的阶梯.</h4>
-        <p>--基尔高</p>
+        <!-- <h4>电影是人类进步的阶梯.</h4> -->
+        <p>在电视时代成长,还能想起胆战心惊、风声鹤唳偷看电视的场景,是匮乏且统一的娱乐。现在长成了不可思议的不看电视的成年人,我标记,分类,评论不同的人生。</p>
       </div>  
     </div>
     <div class="container" @click="chooseMusic" v-bind:style="{padding:container}">
@@ -27,8 +27,8 @@
         <i ref="music"><font-awesome-icon icon="music" /></i>
       </div>
       <div class="content">
-        <h4>俺也一样.</h4>
-        <p></p>
+        <!-- <h4>俺也一样.</h4> -->
+        <p>在高三毕业买了第一个手机后,我保持睡前听歌的习惯有多几个月,歌声顺着耳机线流入心脏,泵入每一个细胞,不用再用被子结界阻拦黑夜的恶魔。</p>
       </div> 
     </div>
   </div>
@@ -85,9 +85,8 @@ export default {
         display: flex;
         justify-content:space-between;
       }
-      .icon{
-        
-        margin: 0px 20px; 
+      .icon{        
+        margin:20px; 
         color: #ddd;
       }
       .icon i{
@@ -95,9 +94,11 @@ export default {
           font-size: 70px; 
       }
       .content{
-         padding:20px 40px 0px 0px;
-      }
-      .content{
-        text-align: right;
+         padding:20px;
+         text-align: left;
+         p{
+          font-style:italic;font-size:0.7em;color:#aaa;
+          line-height:1.6em;
+         }
       }
 </style>

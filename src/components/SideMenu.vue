@@ -1,16 +1,17 @@
 <template>
   <div>
       <div class="sidebar" v-bind:style="{right:sidebarRight+'px'}">
+      <BallAnimate v-if="renderAnimate" :remove="removeAnimate"  :ele="ctxPre"></BallAnimate>
        <i class="bars" :style="{color:color?color:'#000'}"   @click="showSidebar"><font-awesome-icon icon="bars" /></i>
        <div>
            <div style="position:absolute;top:5px;right:5px;font-size:0.6em;font-weight:bolder;color:#666;">
              <!-- <i><font-awesome-icon icon="map-marker-alt" /></i> -->
-              <i style="font-size:1.6em;">
+              <i style="font-size:1.6em;vertical-align:middle;">
                   <svg class="icon" aria-hidden="true" ref="weather">
                    <!--  <use xlink:href="#icon-sunny"></use> -->
                   </svg>
               </i>
-             <span style="margin-left:-5px;">{{city}}</span>
+             <span style="margin-left:-5px;vertical-align:middle;">{{city}}</span>
            </div>
            <div v-show="!option.img" style="overflow:hidden;text-align:center;margin-top:20px;position:relative">
               <img :src="img_src"  :style="{width:imgWidth+'px',height:imgWidth+'px',borderRadius:'50%'}">
@@ -20,7 +21,7 @@
                 </div>
               </transition>
            </div>
-           <div class="cropper" v-show="option.img" :style="{position:'absolute',width:windowWidth+'px',height:windowHeight+'px',left:(260-windowWidth)+'px',zIndex:'100'}">
+           <div class="cropper" v-show="option.img" :style="{position:'absolute',width:windowWidth+'px',height:windowHeight+'px',left:(260-windowWidth)+'px',zIndex:'100',top:'0px'}">
               <div>
                  <div style="background-color:#fff;">
                    <mt-button type="default" style="margin:5px 5px;" size="small"  @click="cropCancel">取消</mt-button>
@@ -100,56 +101,7 @@
              </ul>  
               
            </transition-group>
-           <!-- <div style="text-align:center;" > 
-              <transition  enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-                 <mt-button type="default" style="margin-bottom:10px;" size="small" v-show="!person_name" @click="showSubmit">登录</mt-button>
-              </transition>
-              <transition  enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-                  <p v-show="person_name">一位不愿透露名字的网友</p>
-              </transition>
-           </div>
-           <transition :duration="1000" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-             <div v-show="show_Submit"  style="background-color:#fff;border-radius:10px;padding-bottom:5px;overflow:hidden;">
-                  <input style="width:100%;border:none;height:35px;padding:0px 10px;margin-top:10px;" type="text" placeholder="一位不愿透露名字的网友?" v-model="username" ref="username">
-                  <div style="margin-top:10px;text-align:center;">
-                    <mt-button type="primary" size="small" style="margin-right:5px;" @click="submit">提交</mt-button>
-                    <mt-button type="default" size="small" plain @click="hideSubmit">取消</mt-button>
-                  </div>
-              </div>
-            </transition> -->
-       </div>
-           <!-- <ul class="sideContent" ref="contenter">
-               <li>
-                <i><font-awesome-icon icon="home" /></i>
-                <router-link to="/default">首页</router-link>
-               </li>
-               <li>
-                <i>
-                    <svg class="icon" aria-hidden="true">
-                      <use xlink:href="#icon-douban"></use>
-                    </svg>
-                </i>
-                <router-link to="/book-movie-music">书影音</router-link>
-               </li>
-               <li>
-                <i><font-awesome-icon icon="calendar" /></i>
-                <router-link to="/timeTravel">时光里</router-link>
-               </li>
-               <li>
-                   <i><font-awesome-icon icon="edit" /></i>
-                   <router-link to="/article">文字记</router-link>
-               </li>
-               <li>
-                <i >
-                    <font-awesome-icon icon="fish" />
-                </i>
-                <router-link to="/whimsy">钓鱼记</router-link>
-                </li>   
-               <li>
-                <i><font-awesome-icon icon="comment" /></i>
-                <router-link to="/message">留言</router-link>
-               </li>   
-           </ul>    -->
+       </div>       
     </div>
     <div v-show="mid" @click="hideSideBar" style="width: 100%;height: 200%;margin-top:-200px;background-color: rgba(0,0,0,0.2);position: fixed;z-index: 98;">
     </div>
@@ -163,6 +115,7 @@ import { Field } from 'mint-ui';
 import { mapMutations } from 'vuex'
 import {Toast} from 'mint-ui'
 import { VueCropper }  from 'vue-cropper' 
+import BallAnimate  from './BallAnimate' 
 
 Vue.component(Field.name, Field);
 Vue.component(Button.name, Button);
@@ -171,7 +124,8 @@ const axios = require('axios');
 export default {
   name:'SideMenu',
   components:{
-    VueCropper
+    VueCropper,
+    BallAnimate
   },
   props:['color'],
   data(){
@@ -202,7 +156,10 @@ export default {
       fileName:'',
       cropBlobData:'',
       cropBlobSrc:'',
-      weatherIcon:''
+      weatherIcon:'',
+      ctxPre:null,   //canvas上方元素
+      renderAnimate:false,   //是否初始化动画
+      removeAnimate:false   //清除动画
     }
   },
   computed:{
@@ -341,6 +298,8 @@ export default {
                 clearInterval(sideAnime);
               }
           },10)
+          //添加动画
+          this.removeAnimate=false;
       },
       hideSideBar(){
         this.mid=false;
@@ -358,6 +317,8 @@ export default {
           }
         },20)
         // return false;
+        //清空动画
+        this.removeAnimate=true;
       },
   },
   mounted(){
@@ -397,7 +358,9 @@ export default {
       .finally(function(){
         that.$indicator.close();
       }) 
-      
+      //动画初始化
+      this.renderAnimate=true;
+      this.ctxPre=document.getElementsByClassName('sidebar')[0]
   }
 }
 </script>

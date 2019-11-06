@@ -97,9 +97,9 @@ export default{
           var col2=index2%3;
           var row2=Math.floor(index2/3);
           data[row1][col1].isBomb=true;
-          data[row1][col1].backImgSrc=require('../assets/img/bomb.jpg');
+          // data[row1][col1].backImgSrc=require('../assets/img/bomb.jpg');
           data[row2][col2].isBomb=true;
-          data[row2][col2].backImgSrc=require('../assets/img/bomb.jpg');
+          // data[row2][col2].backImgSrc=require('../assets/img/bomb.jpg');
           
           for (var i = 0; i < 15; i++) {
               data[Math.floor(i/3)][i%3].aroundBomb=this.checkAround(data,i);
@@ -109,7 +109,7 @@ export default{
     ...mapState(['personname','personimgsrc'])
   },
   methods:{
-    //检查周围八个
+    //计算周围的炸弹数量
     checkAround(data,order){
              var col=order%3;
              var row=Math.floor(order/3);
@@ -165,12 +165,13 @@ export default{
                      }
                  }
              }
-             // 是炸弹,其余炸弹翻转,全部禁用
+             // 是炸弹,其余炸弹翻转,换为炸弹背景,全部禁用
              if(param.isBomb){
                  for (var i = 0; i < this.bombData.length; i++) {
                   for (var j = 0; j < this.bombData[i].length; j++) {
                       this.bombData[i][j].isEnd=true;
                       if(this.bombData[i][j].isBomb){
+                        this.bombData[i][j].backImgSrc=require('../assets/img/bomb.jpg'); 
                         this.bombData[i][j].isPre=false;
                      }
                   }         
@@ -189,7 +190,7 @@ export default{
                   }
                   if(count.length==2){
                       for (let i = 0; i < count.length; i++) {
-                          this.bombData[count[i].row][count[i].col].backImgSrc=require("../assets/img/bombfree.jpg")
+                          // this.bombData[count[i].row][count[i].col].backImgSrc=require("../assets/img/bombfree.jpg")
                           this.bombData[count[i].row][count[i].col].isPre=false;
                       }
                   }
@@ -211,6 +212,7 @@ export default{
         margin:0px;
         padding: 0px;
         font-family: Microsoft YaHei,Arial,sans-serif;
+        user-select: none;
       }
       p{
         font-size:16px;
