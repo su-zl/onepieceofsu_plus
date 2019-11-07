@@ -17,7 +17,7 @@
            <div style="display: flex;padding:20px 10px 0px 10px;justify-content:space-between;" class="title">
               <div>
                 <h2>{{currentPageData.title}}</h2>
-                <p>{{currentPageData.message}}</p>
+                <p style="font-size:0.8em;color:#666;">{{currentPageData.message}}</p>
               </div>
                <div >
                 <img style="width: 100px;" :src="currentPageData.img_src">
@@ -33,7 +33,7 @@
            <div class="divider"></div>
            <div class="comment">
               <h4>我听：</h4>
-              <p v-for="item in currentPageData.comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item}}<br>
+              <p v-for="item in currentPageData.comment" style="padding-left:2em;font-size:0.8em;color:#222;line-height:1.7em;">{{item}}<br>
             </p>
            </div>
            <div class="divider"></div>
@@ -155,7 +155,7 @@ export default {
          console.log(response);
          let data=response.data;
          for (var i = 0; i < data.length; i++) {
-           data[i].id=data[i].index;
+           data[i].id=data[i].index-1;
            data[i].excerpt=response.data[i].excerpt.split('&');
            for (var j = 0; j < data[i].excerpt.length; j++) {
              data[i].excerpt[j]=that.host+data[i].excerpt[j];

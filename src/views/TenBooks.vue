@@ -17,7 +17,7 @@
            <div style="display: flex;padding:20px 10px 0px 10px;justify-content:space-between;" class="title">
               <div>
                 <h2>{{currentPageData.title}}</h2>
-                <p>{{currentPageData.message}}</p>
+                <p style="font-size:0.8em;color:#666;">{{currentPageData.message}}</p>
               </div>
                <div >
                 <img style="width: 100px;" :src="currentPageData.img_src">
@@ -26,12 +26,12 @@
            <div class="divider"></div>
            <div class="passages">
                <h4>摘抄：</h4>
-               <p v-for="item in currentPageData.excerpt">{{item}}</p>
+               <p v-for="item in currentPageData.excerpt" style="font-size:0.9em;color:#222;">{{item}}</p>
            </div>
            <div class="divider"></div>
            <div class="comment">
               <h4>我读：</h4>
-              <p v-for="item in currentPageData.comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item}}<br>
+              <p v-for="item in currentPageData.comment" style="font-size:0.9em;color:#222;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item}}<br>
             </p>
            </div>
            <div class="divider"></div>
