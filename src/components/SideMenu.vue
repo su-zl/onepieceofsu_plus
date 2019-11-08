@@ -329,35 +329,37 @@ export default {
       this.img_src = this.host+this.person_src;
       //根据ip查询天气
       const that=this;
-      axios.get('https://www.tianqiapi.com/api/?version=v6&appid=61328346&appsecret=cdcm4E8C&ip')
-      .then(function(response){
-           console.log(response);
-           that.whatWeather(response.data);
-           if(that.weather=='xue' || that.weather=='bingbao'){
-              that.weatherIcon = '#icon-snow-heavy'
-           }else if(that.weather=='lei'){
-              that.weatherIcon = '#icon-thunder-shower'
-           }else if(that.weather=='yin'){
-              that.weatherIcon = '#icon-cloudy'
-           }else if(that.weather=='shachen'){
-              that.weatherIcon = '#icon-dust'
-           }else if(that.weather=='wu'){
-              that.weatherIcon = '#icon-fog'
-           }else if(that.weather=='qing'){
-              that.weatherIcon = '#icon-sunny'
-           }else if(that.weather=='yun'){
-              that.weatherIcon = '#icon-cloudy-sunny'
-           }else if(that.weather=='yu'){
-              that.weatherIcon = '#icon-rain-heavy'
-           }
-           that.$refs.weather.innerHTML=`<use xlink:href=${that.weatherIcon}></use>`;
-      })
-      .catch(function(error){
-          console.log(error);
-      })
-      .finally(function(){
-        that.$indicator.close();
-      }) 
+      if(!this.weather){
+          axios.get('https://www.tianqiapi.com/api/?version=v6&appid=61328346&appsecret=cdcm4E8C&ip')
+          .then(function(response){
+               console.log(response);
+               that.whatWeather(response.data);
+               if(that.weather=='xue' || that.weather=='bingbao'){
+                  that.weatherIcon = '#icon-snow-heavy'
+               }else if(that.weather=='lei'){
+                  that.weatherIcon = '#icon-thunder-shower'
+               }else if(that.weather=='yin'){
+                  that.weatherIcon = '#icon-cloudy'
+               }else if(that.weather=='shachen'){
+                  that.weatherIcon = '#icon-dust'
+               }else if(that.weather=='wu'){
+                  that.weatherIcon = '#icon-fog'
+               }else if(that.weather=='qing'){
+                  that.weatherIcon = '#icon-sunny'
+               }else if(that.weather=='yun'){
+                  that.weatherIcon = '#icon-cloudy-sunny'
+               }else if(that.weather=='yu'){
+                  that.weatherIcon = '#icon-rain-heavy'
+               }
+               that.$refs.weather.innerHTML=`<use xlink:href=${that.weatherIcon}></use>`;
+          })
+          .catch(function(error){
+              console.log(error);
+          })
+          .finally(function(){
+            that.$indicator.close();
+          }) 
+      } 
       //动画初始化
       this.renderAnimate=true;
       this.ctxPre=document.getElementsByClassName('sidebar')[0]
