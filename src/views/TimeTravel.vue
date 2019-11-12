@@ -69,7 +69,7 @@ export default {
              return document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
     },
     changeColor(){
-       console.log(this.sectionOffset());
+       // console.log(this.sectionOffset());
        if(this.sectionOffset()>this.scroolHeight){
             this.color='#000'
        }else{
@@ -141,6 +141,7 @@ export default {
       }
       #content p{
         font-size: 0.8em;
+        color:#555;
       }
       .imgBox{
         border: 1px solid #eee;

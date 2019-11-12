@@ -213,15 +213,17 @@ export default{
         padding: 0px;
         font-family: Microsoft YaHei,Arial,sans-serif;
         user-select: none;
+        background-color:transparent;
+        background:none;
       }
       p{
-        font-size:16px;
+        font-size:18px;
       }
       .fa{
         font-size: 1em;
       }
       body{
-        font-size: 16px;
+        font-size: 18px;
       }
       #header{
         padding: 5px 0px;

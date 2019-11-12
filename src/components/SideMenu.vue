@@ -16,8 +16,8 @@
            <div v-show="!option.img" style="overflow:hidden;text-align:center;margin-top:20px;position:relative">
               <img :src="img_src"  :style="{width:imgWidth+'px',height:imgWidth+'px',borderRadius:'50%'}">
               <transition enter-active-class="animated tada" leave-active-class="animated bounceOutRight">
-                <div v-show="show_Submit" @click="showFileChoose"  style="position:absolute;width:100%;height:30%;text-align:center;bottom:0px;background-color:rgba(238,238,238,0.5);">
-                  <font-awesome-icon style="color:#fff;"  icon="images" />
+                <div v-show="show_Submit" @click="showFileChoose"  style="position:absolute;width:100%;height:30%;text-align:center;bottom:0px;background-color:rgba(248,248,248,0.2);">
+                  <font-awesome-icon style="color:#26a2ff;"  icon="images" />
                 </div>
               </transition>
            </div>
@@ -320,6 +320,26 @@ export default {
         //清空动画
         this.removeAnimate=true;
       },
+      changeWeatherIcon(){
+         if(this.weather=='xue' || this.weather=='bingbao'){
+                  this.weatherIcon = '#icon-snow-heavy'
+               }else if(this.weather=='lei'){
+                  this.weatherIcon = '#icon-thunder-shower'
+               }else if(this.weather=='yin'){
+                  this.weatherIcon = '#icon-cloudy'
+               }else if(this.weather=='shachen'){
+                  this.weatherIcon = '#icon-dust'
+               }else if(this.weather=='wu'){
+                  this.weatherIcon = '#icon-fog'
+               }else if(this.weather=='qing'){
+                  this.weatherIcon = '#icon-sunny'
+               }else if(this.weather=='yun'){
+                  this.weatherIcon = '#icon-cloudy-sunny'
+               }else if(this.weather=='yu'){
+                  this.weatherIcon = '#icon-rain-heavy'
+               }
+               this.$refs.weather.innerHTML=`<use xlink:href=${this.weatherIcon}></use>`;
+      }
   },
   mounted(){
       this.sidebarRight=document.getElementsByClassName('sideContent')[0].clientWidth*-1;
@@ -334,24 +354,8 @@ export default {
           .then(function(response){
                console.log(response);
                that.whatWeather(response.data);
-               if(that.weather=='xue' || that.weather=='bingbao'){
-                  that.weatherIcon = '#icon-snow-heavy'
-               }else if(that.weather=='lei'){
-                  that.weatherIcon = '#icon-thunder-shower'
-               }else if(that.weather=='yin'){
-                  that.weatherIcon = '#icon-cloudy'
-               }else if(that.weather=='shachen'){
-                  that.weatherIcon = '#icon-dust'
-               }else if(that.weather=='wu'){
-                  that.weatherIcon = '#icon-fog'
-               }else if(that.weather=='qing'){
-                  that.weatherIcon = '#icon-sunny'
-               }else if(that.weather=='yun'){
-                  that.weatherIcon = '#icon-cloudy-sunny'
-               }else if(that.weather=='yu'){
-                  that.weatherIcon = '#icon-rain-heavy'
-               }
-               that.$refs.weather.innerHTML=`<use xlink:href=${that.weatherIcon}></use>`;
+               that.changeWeatherIcon();
+               
           })
           .catch(function(error){
               console.log(error);
@@ -359,6 +363,8 @@ export default {
           .finally(function(){
             that.$indicator.close();
           }) 
+      }else{
+            this.changeWeatherIcon();
       } 
       //动画初始化
       this.renderAnimate=true;
@@ -388,7 +394,7 @@ export default {
         top: 0px;
         right: -260px;
         z-index: 99;
-        background-color: #eee;
+        background-color: #f8f8f8;
       }
       .sideContent{
         color: #000;
@@ -416,14 +422,15 @@ export default {
        }
       .flip-list-enter,flip-list-leave-to{
          opacity: 0;
-         transform: translateY(100px);
+         transform: translate(1000px,0px);
+
       }
       .flip-list-leave-active{
          position: absolute;
          opacity: 0;
       }
       .flip-list-move {
-          transition: transform 1s;
+          transition: transform .8s;
       }
       .cropper{
         width:260px;

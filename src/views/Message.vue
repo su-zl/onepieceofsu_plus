@@ -158,9 +158,9 @@ export default {
          padding: 10px 10px 10px 30px;
          background-color: #eee;  
          text-align: left;
-         margin-bottom: 10px;
          background-image: url(../assets/img/wood.jpg);
          background-repeat: repeat-y;
+         border-bottom:2px solid #aaa;
       }
       .name{
          font-size: 0.9em;  
@@ -171,8 +171,11 @@ export default {
         font-size: 0.7em; 
       }
       .content{
-         padding-bottom: 10px;
-         line-height: 1.7em;
+         padding: 5px 0px 0px 0px;
+         line-height: 1.8em;
+         color:#222;
+         font-size:0.9em;
+         word-break:break-all;
       }
       .page-loadmore-wrapper {
           overflow: scroll;

@@ -55,7 +55,7 @@ export default {
                           
           })
           //彩蛋
-          this.ctx.fillStyle = '#eee';
+          this.ctx.fillStyle = '#f8f8f8';
           this.ctx.font  = '10px bolder';
           this.ctx.textAlign  = 'center';
           this.ctx.fillText('Designed By Su',130,this.ele.clientHeight-50)

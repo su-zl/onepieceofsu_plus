@@ -82,7 +82,7 @@ export default {
       }
       .container{
         margin: 30px 10px 30px 10px;
-        background-color: #eee;
+        background-color: #f6f6f6;
         display: flex;
         justify-content:space-between;
       }

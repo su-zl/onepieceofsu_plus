@@ -123,6 +123,7 @@ export default {
       }
       #content{
         margin: 5px;
+        
       }
       .imgList{
         display: flex;

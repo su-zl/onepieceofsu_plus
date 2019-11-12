@@ -6,60 +6,67 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "8094159",
+      "icon_id": "45365614",
       "name": "sunny",
       "font_class": "sunny",
       "unicode": "e606",
       "unicode_decimal": 58886
     },
     {
-      "icon_id": "8094160",
+      "icon_id": "45365615",
       "name": "cloudy-sunny",
       "font_class": "cloudy-sunny",
       "unicode": "e607",
       "unicode_decimal": 58887
     },
     {
-      "icon_id": "8094161",
+      "icon_id": "45365616",
       "name": "cloudy",
       "font_class": "cloudy",
       "unicode": "e608",
       "unicode_decimal": 58888
     },
     {
-      "icon_id": "8096939",
+      "icon_id": "45365617",
       "name": "dust",
       "font_class": "dust",
       "unicode": "e609",
       "unicode_decimal": 58889
     },
     {
-      "icon_id": "8096941",
+      "icon_id": "45365618",
       "name": "fog",
       "font_class": "fog",
       "unicode": "e60a",
       "unicode_decimal": 58890
     },
     {
-      "icon_id": "8096943",
+      "icon_id": "45365619",
       "name": "rain-heavy",
       "font_class": "rain-heavy",
       "unicode": "e60b",
       "unicode_decimal": 58891
     },
     {
-      "icon_id": "8096950",
+      "icon_id": "45365620",
       "name": "snow-heavy",
       "font_class": "snow-heavy",
       "unicode": "e60c",
       "unicode_decimal": 58892
     },
     {
-      "icon_id": "8097284",
+      "icon_id": "45365621",
       "name": "thunder-shower",
       "font_class": "thunder-shower",
       "unicode": "e60d",
       "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "4868899",
+      "name": "comment",
+      "font_class": "comment",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
     }
   ]
 }

@@ -22,7 +22,12 @@
                     </div>
                  </viewer>
                  <div style="text-align:right;padding-top:5px;">
-                   <i id="comment" @click="addComment(item.id,index)"><font-awesome-icon icon="comment-dots" /></i>
+                   <i>
+                    <svg id="comment"  @click="addComment(item.id,index)" class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-comment"></use>
+                    </svg>
+                   </i>
+                   <!-- <i id="comment" @click="addComment(item.id,index)"><font-awesome-icon icon="comment-dots" /></i> -->
                  </div>
                  <div style="border-bottom:1px solid #aaa"></div>
                  <div>
@@ -216,13 +221,12 @@ export default {
 
       .section{
          padding: 10px;
-         background-color: #f0f0f0;
+         background-color: #f6f6f6;
          line-height: 2em;
          text-align: left;
          margin-bottom: 10px;
       }
       .content{
-         padding-bottom: 10px;
          font-weight: bold;
       }
       .time{
@@ -235,6 +239,7 @@ export default {
       }
       .comment{
         font-size: 0.6em;
+        word-break:break-all;
       }
       .imgList{
         display: flex;
@@ -250,9 +255,8 @@ export default {
         margin:0px 1px 1px 0px;
       }
       #comment{
-        color:#aaa;
-        font-size:1.5em;
-        margin-right: 10px;
+        width:1.5em;
+        height:1.5em;       
       }
       .page-loadmore-wrapper {
           overflow: scroll;
@@ -263,5 +267,9 @@ export default {
       }
       .rotate{
           transform:rotate(540deg);
+      }
+      .date{
+        font-size:0.8em;
+        color:#666;
       }
 </style>

@@ -35,7 +35,9 @@
 
 <script>
 import SideMenu from '../components/SideMenu.vue'
-import {Indicator } from 'mint-ui'
+import {Indicator,Loadmore } from 'mint-ui'
+import Vue from 'vue'
+Vue.component(Loadmore.name, Loadmore);
 const axios = require('axios');
 
 export default {
@@ -150,7 +152,8 @@ export default {
         border-left: 2px #ffa000 solid;
       }
       .container>li>div:last-child{
-        background-color: #fff;
+        width:80%;
+        background-color: #f6f6f6;
         padding: 5px 8px;
         border-radius: 5px;
       }
@@ -168,4 +171,7 @@ export default {
       .rotate{
           transform:rotate(540deg);
       }
+      .page-loadmore-wrapper {
+          overflow: scroll;
+      } /*loadmore需添加样式 */
 </style>

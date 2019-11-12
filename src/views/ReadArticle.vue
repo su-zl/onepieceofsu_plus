@@ -12,11 +12,15 @@
                 <span class="name">{{commentItem.name}}：</span>
                 <span class="comment">{{commentItem.content}}</span>
              </div>
-         </div>
+         </div>     
     </div> 
 
-    <div>
-       <i id="comment" @click="addComment"><font-awesome-icon icon="comment-dots" /></i>
+    <div>     
+       <i>
+        <svg id="comment" @click="addComment" class="icon" aria-hidden="true">
+          <use xlink:href="#icon-comment"></use>
+        </svg>
+       </i>
     </div>
     <CommentDialog :popupVisible="popupVisible" :itemId="item_id" type="article" @hideDialog="hideDialog" @successSubmit="successSubmit"></CommentDialog>
   </div> 
@@ -82,7 +86,7 @@ export default {
              return document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
     },
     changeColor(){
-       console.log(this.sectionOffset());
+       // console.log(this.sectionOffset());
        if(this.sectionOffset()>this.scroolHeight){
             this.color='#000'
        }else{
@@ -118,30 +122,31 @@ export default {
       }
       #container{
         padding: 10px 10px;
-        div{
-          line-height: 1.8em;
-        }
+        line-height: 1.8em;
       }
       .title{
-         font-size: 1.2em;
+         font-size: 1.1em;
          font-weight: bolder;
          padding-bottom: 5px;
          text-align: center;
       }
       .pagetitle{
-         font-size: 1em;
-         /*font-weight: bold;*/
+         font-size: 0.9em;
+         font-weight: bold;
          padding: 3px 0px; 
+         
       }
       .section{
-         font-size: 0.9em;
+         font-size: 0.8em;
          padding: 3px 0px; 
+         line-height: 2.1em;
       }
       #comment{
+        width:1.5em;
+        height:1.5em;
         color:#aaa;
-        font-size:1.5em;
-        float: right;
-        margin-right: 20px;
+        float:right;
+        margin:0px 10px 10px 0px;
       }
       .mint-popup-top{
         top: 10%;
