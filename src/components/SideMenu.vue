@@ -229,9 +229,12 @@ export default {
                      console.log(response);
                      let data=response.data;
                      if(data.rows.length>0){
-                         that.loginSuccess(data.rows[0]);
-                         that.img_src = that.host+that.person_src;
+                         that.loginSuccess(data.rows[0]);  
+                         that.img_src = that.host+that.person_src;                 
+                     }else{
+                         that.loginSuccess({name:that.username});
                      }
+                     
                 })
                 .catch(function(error){
                     console.log(error);
