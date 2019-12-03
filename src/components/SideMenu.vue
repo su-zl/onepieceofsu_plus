@@ -145,8 +145,8 @@ export default {
           canMoveBox: true, 
           canScale:true,
           autoCrop: true, 
-          autoCropWidth: 100, 
-          autoCropHeight: 100, 
+          autoCropWidth: 200, 
+          autoCropHeight: 200, 
           fixedBox: true,
           centerBox:true,
           maxImgSize:260

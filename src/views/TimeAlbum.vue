@@ -36,7 +36,7 @@ export default {
          loading:true,
          boxHeight:0,
          imgWidth:null,
-         images: [require('../assets/img/timeAlbum/1.jpg'), require('../assets/img/timeAlbum/2.jpg'), require('../assets/img/timeAlbum/3.jpg'), require('../assets/img/timeAlbum/4.jpg'), require('../assets/img/timeAlbum/5.jpg')],
+         images: [],
     }
   },
   computed:{

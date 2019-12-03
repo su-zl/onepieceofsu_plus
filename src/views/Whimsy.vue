@@ -14,7 +14,7 @@
                  <div class="date">
                    <span>{{item.date}}</span>
                  </div>
-                 <viewer :images="item.img_src">
+                 <viewer v-if="item.img_src" :images="item.img_src">
                     <div class="imgList">
                        <div class="imgBox" v-for="imgSrc in item.img_src" :style="{width:imgWidth+'px',height:imgWidth+'px'}" :key="imgSrc">
                          <img @load="AutoResizeImage(imgWidth,$event.target)" :src="imgSrc" >
@@ -38,8 +38,8 @@
                  </div>
               </li>
               <li v-if="pullLoad">
-                <div style="border:1px solid #aaa;"></div>
-                <p style="text-align:center">End</p>
+                <!-- <div style="border:1px solid #aaa;"></div> -->
+                <p style="text-align: center;font-size:0.8em;color:#333;">End</p>
               </li>
           </ul> 
           <div slot="bottom" class="mint-loadmore-bottom">
@@ -153,9 +153,11 @@ export default {
              console.log(response);
              let data=response.data.rows;
              for (var i = 0; i < data.length; i++) {
-               data[i].img_src=data[i].img_src.split('&')
-               for (var j = 0; j <  data[i].img_src.length; j++) {
+               if(data[i].img_src){
+                data[i].img_src=data[i].img_src.split('&')
+                for (var j = 0; j <  data[i].img_src.length; j++) {
                   data[i].img_src[j]=that.host+data[i].img_src[j]
+                }
                }
              }
              if(data.length>0){
@@ -190,10 +192,12 @@ export default {
            console.log(response);
            let data=response.data.rows;
            for (var i = 0; i < data.length; i++) {
-             data[i].img_src=data[i].img_src.split('&')
-             for (var j = 0; j <  data[i].img_src.length; j++) {
-                data[i].img_src[j]=that.host+data[i].img_src[j]
-             }
+              if(data[i].img_src){
+                data[i].img_src=data[i].img_src.split('&')
+                for (var j = 0; j <  data[i].img_src.length; j++) {
+                  data[i].img_src[j]=that.host+data[i].img_src[j]
+                }
+              }
            }
            if(data.length<10){
               that.allLoaded = true;// 若数据已全部获取完毕
