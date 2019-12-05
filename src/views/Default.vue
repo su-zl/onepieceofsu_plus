@@ -5,7 +5,7 @@
     </div>
     <SideMenu></SideMenu>
     <div id="content">
-        <table  v-bind:style="{width: '100%',height:tableHeight+'px'}">
+        <table   v-bind:style="{width: '100%',height:tableHeight+'px'}">
           <tr is="OverturnBox" v-for="data in  bombData"  :items="data" :table-height="tableHeight" :table-width="tableWidth" @bomb-check="resultCheck" ></tr>
         </table>
     </div>
