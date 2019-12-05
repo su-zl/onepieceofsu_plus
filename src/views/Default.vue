@@ -14,7 +14,7 @@
 </template>
 <script>
 import Vue from 'vue'
-import SideMenu from '../components/SideMenu.vue'
+import SideMenu from  '../components/SideMenu.vue'
 import OverturnBox from '../components/OverturnBox.vue'
 // import app from '../config/ajax.js'
 import {mapState} from 'vuex'
