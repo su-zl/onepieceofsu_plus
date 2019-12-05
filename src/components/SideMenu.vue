@@ -43,6 +43,8 @@
               :autoCropWidth="option.autoCropWidth"
               :autoCropHeight="option.autoCropHeight"
               :fixedBox="option.fixedBox"
+              :fixed="option.fixed"
+              :fixedNumber="option.fixedNumber"
               :centerBox="option.centerBox"
               :maxImgSize="option.maxImgSize"
               @imgLoad="imgLoad"
@@ -148,6 +150,8 @@ export default {
           autoCropWidth: 200, 
           autoCropHeight: 200, 
           fixedBox: true,
+          fixed:true,
+          fixedNumber:[1,1],
           centerBox:true,
           maxImgSize:260
         },

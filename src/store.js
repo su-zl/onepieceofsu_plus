@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
       person_name:'',
       person_src:'/person/primary/person.jpg',
-      host:'http://192.168.11.99:3000',
+      host:'http://122.51.163.46:3000',
       weather:'',
       city:'??',
   },

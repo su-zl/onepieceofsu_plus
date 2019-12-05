@@ -5,7 +5,7 @@
     </div>
     <SideMenu></SideMenu>
     <div id="content">
-        <table   v-bind:style="{width: '100%',height:tableHeight+'px'}">
+        <table  v-bind:style="{width: '100%',height:tableHeight+'px'}">
           <tr is="OverturnBox" v-for="data in  bombData"  :items="data" :table-height="tableHeight" :table-width="tableWidth" @bomb-check="resultCheck" ></tr>
         </table>
     </div>
@@ -14,11 +14,10 @@
 </template>
 <script>
 import Vue from 'vue'
-import SideMenu from  '../components/SideMenu.vue'
+import SideMenu from '../components/SideMenu.vue'
 import OverturnBox from '../components/OverturnBox.vue'
 // import app from '../config/ajax.js'
 import {mapState} from 'vuex'
-import {Indicator} from 'mint-ui'
 // import {Indicator } from 'mint-ui'
 // import { Swipe, SwipeItem } from 'mint-ui'
 // Vue.component(Swipe.name, Swipe)
@@ -203,10 +202,10 @@ export default{
         this.tableWidth=document.getElementById('content').clientWidth;
         this.loadingWidth=window.innerWidth;
         this.loadingHeight=window.innerHeight;
-        this.$indicator.open({text: '带宽有限，请稍等...',spinnerType: 'double-bounce'});
-        setTimeout(()=>{
-           this.$indicator.close();
-        },2500)
+        // this.$indicator.open({text: '带宽有限，请稍等...',spinnerType: 'double-bounce'});
+        // setTimeout(()=>{
+        //    this.$indicator.close();
+        // },2500)
   },
   created(){
     
