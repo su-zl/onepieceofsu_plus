@@ -93,6 +93,10 @@ export default {
   },
   mounted(){
       this.imgWidth=(document.getElementById("content").clientWidth-4)/4; 
+      //是否pc端
+      if(!/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+         document.getElementById('content').style.minHeight=(window.innerHeight-document.getElementById('header').clientHeight-10)+'px';
+      }
   },
   created(){
       this.$indicator.open({text: '',spinnerType: 'double-bounce'});

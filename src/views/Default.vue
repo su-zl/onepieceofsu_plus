@@ -198,6 +198,15 @@ export default{
         }
   },
   mounted(){
+        //是否pc端
+        if(!/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            document.getElementById('app').style.position='absolute';
+            document.getElementById('app').style.left=(window.innerWidth-450)/2+'px';
+            document.getElementById('app').style.width=Math.floor((window.innerHeight-document.getElementById('content').clientHeight)*(9/15))+'px';
+            // document.getElementById('app').style.height='100%';
+            document.getElementById('app').style.backgroundColor='#ffff';
+            document.body.style.backgroundColor='#eee';
+        }
         this.tableHeight=window.innerHeight-document.getElementById('content').offsetTop;
         this.tableWidth=document.getElementById('content').clientWidth;
         this.loadingWidth=window.innerWidth;

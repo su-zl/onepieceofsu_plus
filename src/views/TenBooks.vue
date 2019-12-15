@@ -1,5 +1,5 @@
 <template>
-  <div id="app" style="visibility:hidden;" v-bind:style="{visibility:loading}"  >
+  <div  style="visibility:hidden;" v-bind:style="{visibility:loading}"  >
      <div id="header">
         <div v-if="currentPageData">
           <span>{{currentPageData.id+1}}</span><span>/{{Data.length}}</span>
