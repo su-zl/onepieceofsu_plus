@@ -205,7 +205,7 @@ export default{
             document.getElementById('app').style.width=Math.floor((window.innerHeight-document.getElementById('content').clientHeight)*(9/15))+'px';
             // document.getElementById('app').style.height='100%';
             document.getElementById('app').style.backgroundColor='#ffff';
-            document.body.style.backgroundColor='#eee';
+            document.body.style.backgroundColor='#7A7A7A';
             this.$store.commit('judgeIsPc',true)
         }
         this.tableHeight=window.innerHeight-document.getElementById('content').offsetTop;
