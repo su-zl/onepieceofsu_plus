@@ -20,10 +20,17 @@
                    <p class="content">{{item.content}}</p>
                  </div>     
               </div>
+              <div style="margin-top:20px;" v-if="pullLoad">
+                    <p style="text-align: center;font-size:0.8em;color:#333;">End</p>
+              </div>
           </div>
           <div slot="bottom" class="mint-loadmore-bottom">
             <span id="animate" v-show="bottomStatus !== 'loading'" :class="{ 'rotate': bottomStatus === 'pull' }">↑</span>
             <span v-show="bottomStatus == 'loading'">加载中</span>
+          </div>
+          <div v-if="isPc && !allLoaded && firstLoaded" style="text-align:right;margin-top:20px;">
+              <mt-button  plain icon="more" type="default" size="normal"  @click="nextPage
+              " ></mt-button>
           </div>
         </mt-loadmore>
     </div>
@@ -34,9 +41,14 @@
 </template>
 
 <script>
+import { Button } from 'mint-ui'
 import SideMenu from '../components/SideMenu.vue'
 import {Indicator,Toast } from 'mint-ui'
 import CommentDialog from '../components/CommentDialog.vue'
+import Vue from 'vue'
+
+Vue.component(Button.name, Button);
+
 const axios = require('axios');
 
 export default {
@@ -55,7 +67,9 @@ export default {
          bottomStatus:'pull',
          pageIndex:1,
          Data:[],
-         SideMenuColor:'#fff'
+         SideMenuColor:'#fff',
+         firstLoaded:false,
+         pullLoad:false,
     }
   },
   computed:{
@@ -64,6 +78,9 @@ export default {
     },
     person_name(){
       return this.$store.state.person_name
+    },
+    isPc(){
+      return this.$store.state.isPc;
     }
   },
   methods:{
@@ -85,6 +102,7 @@ export default {
             }
             if(data.length<10){
                that.allLoaded = true;// 若数据已全部获取完毕
+               that.pullLoad=true;
             }
             that.$refs.loadmore.onBottomLoaded();
         })
@@ -117,6 +135,9 @@ export default {
       success(data){
         this.Data.unshift(data);
          // window.location.reload();
+      },
+      nextPage(){
+        this.loadBottom();
       }
   },
   mounted(){
@@ -130,6 +151,11 @@ export default {
            console.log(response);
            let data=response.data.rows;
            that.Data=data;
+           if(data.length<10){
+               that.allLoaded = true;// 若数据已全部获取完毕
+            }
+           //首次加载完成
+           that.firstLoaded=true
       })
       .catch(function(error){
           console.log(error);

@@ -106,7 +106,7 @@ export default{
           }
           return data;
     },
-    ...mapState(['personname','personimgsrc'])
+    ...mapState(['personname','personimgsrc']),
   },
   methods:{
     //计算周围的炸弹数量
@@ -195,7 +195,7 @@ export default{
                       }
                   }
              }
-        }
+        },
   },
   mounted(){
         //是否pc端
@@ -206,6 +206,7 @@ export default{
             // document.getElementById('app').style.height='100%';
             document.getElementById('app').style.backgroundColor='#ffff';
             document.body.style.backgroundColor='#eee';
+            this.$store.commit('judgeIsPc',true)
         }
         this.tableHeight=window.innerHeight-document.getElementById('content').offsetTop;
         this.tableWidth=document.getElementById('content').clientWidth;

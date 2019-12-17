@@ -19,11 +19,18 @@
                        <p class="content">{{item.content}}</p>
                     </div>
                  </li>
+                 <li style="display:block;" v-if="pullLoad">
+                    <p style="text-align: center;font-size:0.8em;color:#333;">End</p>
+                 </li>
                </ul>
           </div> 
           <div slot="bottom" class="mint-loadmore-bottom">
             <span id="animate" v-show="bottomStatus !== 'loading'" :class="{ 'rotate': bottomStatus === 'pull' }">↑</span>
             <span v-show="bottomStatus == 'loading'">加载中</span>
+          </div>
+          <div v-if="isPc && !allLoaded && firstLoaded" style="text-align:right;margin-right:13px;">
+              <mt-button  plain icon="more" type="default" size="normal"  @click="nextPage
+              " ></mt-button>
           </div>
         </mt-loadmore>
     </div>
@@ -34,10 +41,13 @@
 </template>
 
 <script>
+import { Button } from 'mint-ui'
 import SideMenu from '../components/SideMenu.vue'
 import {Indicator,Loadmore } from 'mint-ui'
 import Vue from 'vue'
 Vue.component(Loadmore.name, Loadmore);
+Vue.component(Button.name, Button);
+
 const axios = require('axios');
 
 export default {
@@ -54,12 +64,17 @@ export default {
          wrapHeight:1000,
          bottomStatus:'pull',
          Data:[],
-         pageIndex:1
+         pageIndex:1,
+         firstLoaded:false,
+         pullLoad:false,
     }
   },
   computed:{
     host(){
       return this.$store.state.host;
+    },
+    isPc(){
+      return this.$store.state.isPc;
     }
   },
   methods:{
@@ -83,6 +98,7 @@ export default {
              }
              if(data.rows.length<10){
                   that.allLoaded=true;
+                  that.pullLoad=true;
              }
              that.$refs.loadmore.onBottomLoaded();
         })
@@ -97,6 +113,9 @@ export default {
     },
     readArtile(id){
          this.$router.push({name:'readArticle',params:{id}});
+    },
+    nextPage(){
+        this.loadBottom();
     }
   },
   mounted(){
@@ -113,6 +132,8 @@ export default {
            if(data.rows.length<10){
             that.allLoaded=true;
            }
+           //首次加载完成
+           that.firstLoaded=true
       })
       .catch(function(error){
           console.log(error);

@@ -38,13 +38,16 @@
                  </div>
               </li>
               <li v-if="pullLoad">
-                <!-- <div style="border:1px solid #aaa;"></div> -->
                 <p style="text-align: center;font-size:0.8em;color:#333;">End</p>
               </li>
           </ul> 
           <div slot="bottom" class="mint-loadmore-bottom">
             <span id="animate" v-show="bottomStatus !== 'loading'" :class="{ 'rotate': bottomStatus === 'pull' }">↑</span>
             <span v-show="bottomStatus == 'loading'">加载中</span>
+          </div>
+          <div v-if="isPc && !allLoaded && firstLoaded" style="text-align:right;margin-right:13px;">
+              <mt-button  plain icon="more" type="default" size="normal"  @click="nextPage
+              " ></mt-button>
           </div>
         </mt-loadmore>
     </div>
@@ -55,6 +58,7 @@
 </template>
 
 <script>
+import { Button } from 'mint-ui'
 import SideMenu from '../components/SideMenu.vue'
 import CommentDialog from '../components/CommentDialog.vue'
 import {Indicator,Toast,Loadmore  } from 'mint-ui'
@@ -62,6 +66,8 @@ import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
 import Vue from 'vue'
 Vue.component(Loadmore.name, Loadmore);
+Vue.component(Button.name, Button);
+
 Vue.use(Viewer)
 const axios = require('axios');
 
@@ -84,7 +90,8 @@ export default {
          pageIndex:1,
          Data:[],
          commentIndex:null,
-         commentContent:{}
+         commentContent:{},
+         firstLoaded:false
     }
   },
   computed:{
@@ -92,7 +99,10 @@ export default {
       return this.$store.state.host;
     },
     person_name(){
-      return this.$store.state.person_name
+      return this.$store.state.person_name;
+    },
+    isPc(){
+      return this.$store.state.isPc;
     }
   },
   methods:{
@@ -178,6 +188,9 @@ export default {
           that.$indicator.close();
         })
         
+    },
+    nextPage(){
+        this.loadBottom();
     }
   },
   mounted(){
@@ -203,6 +216,8 @@ export default {
               that.allLoaded = true;// 若数据已全部获取完毕
            }
            that.Data=data;
+           //首次加载完成
+           that.firstLoaded=true
       })
       .catch(function(error){
           console.log(error);
