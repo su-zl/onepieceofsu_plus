@@ -205,7 +205,13 @@ export default{
             document.getElementById('app').style.width=Math.floor((window.innerHeight-document.getElementById('content').clientHeight)*(9/15))+'px';
             // document.getElementById('app').style.height='100%';
             document.getElementById('app').style.backgroundColor='#ffff';
-            document.body.style.backgroundColor='#7A7A7A';
+
+            // document.body.style.backgroundColor='#7A7A7A';
+            var bgImgSrc = require('../assets/img/bg_1.jpg')
+            document.body.style.backgroundImage="url("+bgImgSrc+")";
+            document.body.style.backgroundRepeat='no-repeat';
+            document.body.style.backgroundSize='cover' 
+
             this.$store.commit('judgeIsPc',true)
         }
         this.tableHeight=window.innerHeight-document.getElementById('content').offsetTop;
